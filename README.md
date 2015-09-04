@@ -1,4 +1,6 @@
 # XCP
+
+[![Join the chat at https://gitter.im/ben-garside/XCP](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ben-garside/XCP?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 XML Content Pipelining
 
 [![Stories in Ready](https://badge.waffle.io/ben-garside/XCP.svg?label=ready&title=Ready)](http://waffle.io/ben-garside/XCP) 
