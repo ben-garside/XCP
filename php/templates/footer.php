@@ -1,7 +1,6 @@
     </div> <!-- /container -->
  <footer class="footer">
-       	<p class="text-center footer-text"><a target="_" href="https://github.com/ben-garside/XCP/releases/tag/<?php echo Config::get('release/version');?>"><?php echo Config::get('release/version') . "</a> - " . Config::get('release/date');?></p>
-       </footer>
+       	<p class="text-center footer-text"><a target="_" href="https://github.com/ben-garside/XCP/releases/tag/<?php echo Config::get('release/version');?>"><?php echo Config::get('release/version') . "</a> - " . Config::get('release/date');?><br> <?php echo 'Server=' . Config::get('mysql/host') . ';Database=' . Config::get('mysql/db') .';User='. Config::get('mysql/username');?></p>       </footer>
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
