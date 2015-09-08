@@ -73,9 +73,7 @@ if($stage = Input::get('stage')){
 							  <select  class="form-control activity" id="activity_<?php echo $rule['id'] ;?>" aria-describedby="inputSuccess2Status">
 								<option  value="" disabled >Activity</option>
 								<?php
-									$url = $_SERVER['HTTP_HOST'] . '/data/activity.data.lookup.php?type=getActivities';
-									$activities = json_decode(getUrlContent($url));
-
+									$activities = $activities = Activity::listActivities();
 	                 				foreach ($activities as $key => $value) {
 	                 					if($value == $rule['activity']){
 											echo '<option selected value="' . $value . '">' . $value . '</option>';
@@ -90,9 +88,7 @@ if($stage = Input::get('stage')){
 							  <select type="text" class="form-control status" id="status_<?php echo $rule['id'] ;?>" aria-describedby="inputSuccess2Status">
 								  <option class="status" value="" disabled >Status</option>
 									<?php
-										$url = $_SERVER['HTTP_HOST'] . '/data/activity.data.lookup.php?type=getStatuses&key=' . $rule['activity'];
-										$activities = json_decode(getUrlContent($url));
-
+										$activities = Activity::listStatuses($rule['activity']);
 		                 				foreach ($activities as $key => $value) {
 		                 					if($value == $rule['status']){
 												echo '<option selected value="' . $value . '">' . $value . '</option>';
@@ -114,13 +110,13 @@ if($stage = Input::get('stage')){
 							  <select class="form-control action" id="action_<?php echo $rule['id'] ;?>" aria-describedby="inputSuccess2Status">
 							  	<option value="" selected >None</option>
 									<?php
-										$url = $_SERVER['HTTP_HOST'] . '/data/activity.data.lookup.php?type=getActions';
-										$activities = json_decode(getUrlContent($url));
+										$activities = Activity::listActions();
+										print_r($activities);
 		                 				foreach ($activities as $key => $value) {
-		                 					if($value->id == $rule['action']){
-												echo '<option selected value="' . $value->id . '">' . $value->id . ' - ' . $value->name . '</option>';
+		                 					if($value['id'] == $rule['action']){
+												echo '<option selected value="' . $value['id'] . '">' . $value['id'] . ' - ' . $value['name'] . '</option>';
 		                 					} else {
-			                   					echo '<option value="' . $value->id . '">' . $value->id . ' - ' . $value->name . '</option>';
+			                   					echo '<option value="' . $value['id'] . '">' . $value['id'] . ' - ' . $value['name'] . '</option>';
 		                 					}
 		                 				}
 									  ?>
@@ -195,8 +191,7 @@ if($stage = Input::get('stage')){
 	  <select  class="form-control activity" id="activity_xx" >
 		<option  value="" disabled selected>Activity</option>
 		<?php
-			$url = $_SERVER['HTTP_HOST'] . '/data/activity.data.lookup.php?type=getActivities';
-			$activities = json_decode(getUrlContent($url));
+				$activities = Activity::listActivities();
 				foreach ($activities as $key => $value) {			
    					echo '<option value="' . $value . '">' . $value . '</option>';
 				}
@@ -207,8 +202,7 @@ if($stage = Input::get('stage')){
 	  <select type="text" class="form-control status" id="status_xx">
 		  <option class="status" value="" disabled selected>Status</option>
 			<?php
-				$url = $_SERVER['HTTP_HOST'] . '/data/activity.data.lookup.php?type=getStatuses&key=' . $rule['activity'];
-				$activities = json_decode(getUrlContent($url));
+				$activities = Activity::listStatuses();
  				foreach ($activities as $key => $value) {
        				echo '<option value="' . $value . '">' . $value . '</option>';
  				}
@@ -226,10 +220,9 @@ if($stage = Input::get('stage')){
 	  <select class="form-control action" id="action_xx" aria-describedby="inputSuccess2Status">
 	  	<option value="" selected >None</option>
 			<?php
-				$url = $_SERVER['HTTP_HOST'] . '/data/activity.data.lookup.php?type=getActions';
-				$activities = json_decode(getUrlContent($url));
+				$activities = Activity::listActions();
  				foreach ($activities as $key => $value) {
-       				echo '<option value="' . $value->id . '">' . $value->id . ' - ' . $value->name . '</option>';
+       				echo '<option value="' . $value['id'] . '">' . $value['id'] . ' - ' . $value['name'] . '</option>';
  				}
 			  ?>
 	  </select>
