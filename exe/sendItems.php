@@ -6,24 +6,32 @@ echo "\n***********************************\n";
 echo "************ + START + ************\n";
 echo "***********************************\n";
 
-// Config
-// TODO: Move out of this file
-//ftp
-#$ftp_server = "ftp.hugatramp.com"; 
-#$ftp_user_name = "xcptest@hugatramp.com"; 
-#$ftp_user_pass = "xcpTest";
+$runType = 'dev'; #dev|prd
 
-$ftp_server = "203.55.173.10"; 
-$ftp_user_name = "FTP-BSI"; 
-$ftp_user_pass = "PL4789mn";
+if ($runType =='dev'){
+	$ftp_server = "ftp.hugatramp.com"; 
+	$ftp_user_name = "xcptest@hugatramp.com"; 
+	$ftp_user_pass = "Password1";
+	echo "\nRunning as: dev\n";
+
+} elseif ($runType == 'prd') {
+	// $ftp_server = "203.55.173.10"; 
+	// $ftp_user_name = "FTP-BSI"; 
+	// $ftp_user_pass = "PL4789mn";
+	echo "\nRunning as: prd\n";
+
+} else {
+	die('runType must be declared as either prd or dev');
+
+}
 
 //directories
 $dateFile = '../toSend/' . date("Ymd");
 $date = date("Y-m-d");
 $itemDir = '../items';
+
 //get items at the activity with stage...
 $items = Activity::showAtStage(10,20);
-//print_r($items);
 
 //naming config
 $namingArray = array(	1 => 	array(	"name" => "BSI-01-CONV-PDF-BSISDS-",
@@ -78,17 +86,21 @@ $namingArray = array(	1 => 	array(	"name" => "BSI-01-CONV-PDF-BSISDS-",
 // CSV Headings
 $headers = array(	1  => "XCP_ID",
 					2  => "Innodata_Batch_ID[zip filename]",
-					3  => "Batch_Return_Date",
-					4  => "Conversion_Pipeline",
-					5  => "Conversion_Type",
-					6  => "Document_Filename (UPI)",
-					7  => "Standard_ID",
-					8  => "Source_File_Type_1",
-					9  => "Source_File_Type_2",
-					10 => "Output_File_Type",
-					11 => "Page_count",
-					12 => "Document_Title"
+					3  => "Batch_Sent_Date", 
+					4  => "Batch_Return_Date",
+					5  => "Conversion_Pipeline",
+					6  => "Conversion_Type",
+					7  => "Document_Filename (UPI)",
+					8  => "Standard_ID",
+					9  => "Source_File_Type_1",
+					10  => "Source_File_Type_2",
+					11 => "Output_File_Type",
+					12 => "Page_count",
+					13 => "Document_Title",
+					14 => "TAT",
+					15 => "Estimated return date"
 				);
+
 
 
 if(count($items) > 0) {
@@ -154,6 +166,7 @@ if(count($items) > 0) {
 		echo "    Adding data to manifest...\n";
 		$details = array(	$item->XCPID,
 							$namingArray[$item->stream_id]["name"] . $date,
+							$date,
 							"",
 							$item->stream_id,
 							$namingArray[$item->stream_id]["Conversion_Type"],
@@ -163,7 +176,9 @@ if(count($items) > 0) {
 							$namingArray[$item->stream_id]["Source_File_Type_2"],
 							$namingArray[$item->stream_id]["Output_File_Type"],
 							$item->pageCount,
-							str_replace(",", " ", $item->materialTitle)
+							str_replace(",", " ", $item->materialTitle),
+							"",
+							""
 						);
 		fwrite($manifest, implode(",", $details) . "\n");
 
@@ -223,9 +238,6 @@ if(count($items) > 0) {
     echo "\n*** Create folder on FTP: $date\n";
     ftp_mkdir($conn_id, 'To_INNO/' . $date);
 
-    #echo "*** Files to send.../n";
-    #print_r($filesToSend);
-
     // Upload files
     echo "*** Uploading files...\n";
     foreach ($filesToSend as $key => $file) {
@@ -254,15 +266,26 @@ if(count($items) > 0) {
 	    $mail->From = 'xcp_noreply@bsigroup.com';
 	    $mail->FromName = 'XCP';
 
-	    $mail->addAddress('JNemis@INNODATA.COM'); 
-	    $mail->addAddress('LGoboy@INNODATA.COM');
-	    $mail->addAddress('content.operations@bsigroup.com'); 
-	    $mail->addAddress('gcmontesclaros@INNODATA.COM'); 
+		if ($runType =='dev'){
+			$mail->addAddress('content.operations@bsigroup.com');
+			$mail->AddCC('ben.garside@bsigroup.com');
+
+			$mail->Subject = 'UAT::Innodata_Batch_Alert_' . $date;
+
+		} elseif ($runType == 'prd') {
+		    $mail->addAddress('JNemis@INNODATA.COM'); 
+		    $mail->addAddress('LGoboy@INNODATA.COM');
+		    $mail->addAddress('gcmontesclaros@INNODATA.COM');
+			$mail->AddCC('content.operations@bsigroup.com'); 
+
+			$mail->Subject = 'Innodata_Batch_Alert_' . $date;
+
+		} else {
+			die('runType must be declared as either prd or dev');
+		}
 
 	    $mail->isHTML(true); 
-
 	    $mail->addAttachment($dateFile . "/transmissionSheet_" . $date . ".csv", "transmissionSheet_" . $date . ".csv");
-	    $mail->Subject = 'Innodata_Batch_Alert_' . $date;
 		$mail->Body    = '<p>Dear Innodata,</p>
 						  <p>This is to inform you that a new batch has been transferred to Innodata\'s FTP site, for review for producing agreed XML outputs. Attached is a transmission sheet detailing each Material (identified by UPI) in the batch.</p>
 						  <p><strong>Please could you confirm receipt of these files and get back on an estimated turnaround time (TAT) and cost. Following this we will confirm whether work should proceed.</strong></p>
@@ -300,17 +323,27 @@ if(count($items) > 0) {
 
     $mail->From = 'xcp_noreply@bsigroup.com';
     $mail->FromName = 'XCP';
-    
-    $mail->AddCC('content.operations@bsigroup.com'); 
-    $mail->addAddress('APradeep@innodata.com'); 
-    $mail->addAddress('LGoboy@INNODATA.COM');
-    //$mail->addAddress('ben.garside@bsigroup.com'); 
 
+	if ($runType =='dev'){
+		$mail->addAddress('content.operations@bsigroup.com');
+		$mail->AddCC('ben.garside@bsigroup.com');
+
+		$mail->Subject = 'UAT::Innodata_Batch_Alert_' . $date;
+
+	} elseif ($runType == 'prd') {
+	    $mail->AddCC('content.operations@bsigroup.com'); 
+	    $mail->addAddress('APradeep@innodata.com'); 
+	    $mail->addAddress('LGoboy@INNODATA.COM'); 
+
+		$mail->Subject = 'Innodata_Batch_Alert_' . $date;
+
+	} else {
+		die('runType must be declared as either prd or dev');
+	}
 
     $mail->isHTML(true); 
 
     $mail->addAttachment($dateFile . "/transmissionSheet_" . $date . ".csv", "transmissionSheet_" . $date . ".csv");
-    $mail->Subject = 'Innodata_Batch_Alert_' . $date;
 	$mail->Body    = '<p>Dear Innodata,</p>
 					  <p>This is to inform you that a new batch has been transferred to Innodata\'s FTP site, for review for producing agreed XML outputs. Attached is a transmission sheet detailing each Material (identified by UPI) in the batch.</p>
 					  <p><strong>Please could you confirm receipt of these files and get back on an estimated turnaround time (TAT) and cost. Following this we will confirm whether work should proceed.</strong></p>
@@ -348,7 +381,42 @@ if(count($items) > 0) {
 
 
 } else {
-	die ( 'No files to send.' );
+	echo "\n**** NO FILES TO SEND ****\n";
+	echo "**************************\n";
+    echo "** Send out notification...\n";
+
+	$mail = new PHPMailer;
+
+    $mail->isSMTP();
+    $mail->Host = '10.103.109.71';
+    $mail->SMTPAuth = false;
+    $mail->Port = 25;
+    $mail->SMTPOptions = array (
+        'ssl' => array(
+            'verify_peer'  => false,
+            'verify_peer_name'  => false,
+            'allow_self_signed' => true));
+
+    $mail->From = 'xcp_noreply@bsigroup.com';
+    $mail->FromName = 'XCP';
+
+	//$mail->addAddress('content.operations@bsigroup.com');
+	$mail->addAddress('ben.garside@bsigroup.com');
+
+    $mail->isHTML(true); 
+    $mail->addAttachment($dateFile . "/transmissionSheet_" . $date . ".csv", "transmissionSheet_" . $date . ".csv");
+    $mail->Subject = 'UAT::Innodata_Batch_Alert_' . $date;
+	$mail->Body    = '<p>Hello,</p>
+					  <p>A send has been initiated but there were no files to be sent.</p><br />
+					  <p>Many thanks</p>';
+
+	if(!$mail->send()) {
+	    echo 'Message could not be sent.';
+	    echo 'Mailer Error: ' . $mail->ErrorInfo;
+	    exit;
+	}
+	echo "** Sent.\n";
+
 }
 
 	echo "\n*********************************\n";
