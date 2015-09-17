@@ -64,7 +64,7 @@ if($id = Input::get('id')){
 			    		<div class="editRule">
 							<div class="form-group" id="<?php echo $field['field_id'] ;?>">
 							  <p class="col-sm-offset-0 col-sm-1" style="padding-top: 7px;"><span class="label label-default"><?php echo $field['field_id'] ;?></span></p>
-							  <label class="control-label col-sm-2 " for="field_name_<?php echo $field['field_id'] ;?>">Unique name  <sup><i class="fa fa-info-circle" style="padding-top: 7px;" tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="top" title="Display" data-content="The text that will be shown as the label for this field."></i></sup></label>
+							  <label class="control-label col-sm-2 " for="field_name_<?php echo $field['field_id'] ;?>" tabindex="0" data-toggle="popover" data-trigger="hover" data-placement="right" title="Unique name" data-html="true" data-content="This is an internal name for this field, it must be unique to the other internal names in the data table you are using.<br><br><em>Required Field?</em><br>Select this if you wnat tis field to be a required field in the form" >Unique name <i class="fa fa-info-circle" ></i></label>
 							  <div class="col-sm-5">
 								  <input class="form-control" type="form-control" id="field_name_<?php echo $field['field_id'] ;?>" value="<?php echo $field['field_name'] ;?>">
 								  <input class="form-control" type="hidden" id="action_id_<?php echo $field['field_id'] ;?>" value="<?php echo $field['action_id'] ;?>">
@@ -83,13 +83,13 @@ if($id = Input::get('id')){
 								</div>
 							</div>
 							<div class="form-group" >
-							  <label class="control-label col-sm-3 " for="field_name_display_<?php echo $field['field_id'] ;?>">Display <sup><i class="fa fa-info-circle" style="padding-top: 7px;" tabindex="0" role="button" data-toggle="popover" data-trigger="hover" data-placement="top" title="Display" data-content="The text that will be shown as the label for this field."></i></sup></label> 
+							  <label class="control-label col-sm-3 " for="field_name_display_<?php echo $field['field_id'] ;?>" data-toggle="popover" data-trigger="hover" data-placement="right" title="Display" data-html="true" data-content="The text that will be shown as the label for this field.">Display <i class="fa fa-info-circle"></i></label> 
 							  <div class="col-sm-6">
 								  <input class="form-control" type="form-control activity" id="field_name_display_<?php echo $field['field_id'] ;?>" value="<?php echo $field['field_name_display'] ;?>">
 							  </div>
 							</div>
 							<div class="form-group" >
-							  <label class="control-label col-sm-3 " for="field_prefix_<?php echo $field['field_id'] ;?>">Prefix / Suffix</label>
+							  <label class="control-label col-sm-3 " for="field_prefix_<?php echo $field['field_id'] ;?>" tabindex="0" data-toggle="popover" data-trigger="hover" data-placement="right" title="Prefix / Suffix" data-html="true" data-content="The text that will prepend or append the input field.<br /><br />This can be text or a FA tag <i class='fa fa-car'></i> (class='fa fa-car') for example." >Prefix / Suffix <i class="fa fa-info-circle" ></i></label>
 							  <div class="col-sm-3">
 							  <input class="form-control" type="form-control activity" id="field_prefix_<?php echo $field['field_id'] ;?>" value="<?php echo htmlspecialchars($field['field_prefix']) ;?>" placeholder="prefix">
 							  </div>			  
@@ -98,25 +98,25 @@ if($id = Input::get('id')){
 							  </div>
 							</div>
 							<div class="form-group" >
-							  <label class="control-label col-sm-3 " for="data_placeholder_<?php echo $field['field_id'] ;?>">Placeholder</label>
+							  <label class="control-label col-sm-3 " for="data_placeholder_<?php echo $field['field_id'] ;?>" data-toggle="popover" data-trigger="hover" data-placement="right" title="Placeholder" data-html="true" data-content="The text that will be shown in the input filed if no other data is present.">Placeholder <i class="fa fa-info-circle"></i></label>
 							  <div class="col-sm-6">
 								  <input class="form-control" type="form-control activity" id="data_placeholder_<?php echo $field['field_id'] ;?>" value="<?php echo $field['data_placeholder'] ;?>" placeholder="placeholder">
 							  </div>
 							</div>
 							<div class="form-group" >
-							  <label class="control-label col-sm-3 " for="data_validation_<?php echo $field['field_id'] ;?>">Validation rule</label>
+							  <label class="control-label col-sm-3 " for="data_validation_<?php echo $field['field_id'] ;?>" data-toggle="popover" data-trigger="hover" data-placement="right" title="Validation rule" data-html="true" data-content="A regex string that the entry will be validated against.<br /><br />For example:<br /> - [0-9]{8} - An 8 digit number<br /> - [0-9]{5}\\[0-9]{4} - A project number">Validation rule <i class="fa fa-info-circle"></i></label>
 							  <div class="col-sm-6">
 								  <input class="form-control" type="form-control activity" id="data_validation_<?php echo $field['field_id'] ;?>" value="<?php echo $field['data_validation'] ;?>" placeholder="validation rule">
 							  </div>
 							</div>
 							<div class="form-group" >
-							  <label class="control-label col-sm-3" for="data_validation_helper_<?php echo $field['field_id'] ;?>">data_validation_helper</label>
+							  <label class="control-label col-sm-3" for="data_validation_helper_<?php echo $field['field_id'] ;?>" data-toggle="popover" data-trigger="hover" data-placement="right" title="data_validation_helper" data-html="true" data-content="A text string that will be returnd to the user if the validation fails. <br /><br />For eample:<br/> - Entry must be a UPI.<br/> - Entry must be a Project number.">data_validation_helper <i class="fa fa-info-circle"></i></label>
 							  <div class="col-sm-6">
 								  <input class="form-control" type="form-control activity" id="data_validation_helper_<?php echo $field['field_id'] ;?>" value="<?php echo $field['data_validation_helper'] ;?>" placeholder="data_validation_helper">
 							  </div>
 							</div>
 							<div class="form-group" >
-								<label class="control-label col-sm-3 " for="source_table_<?php echo $field['field_id'] ;?>">Database</label>
+								<label class="control-label col-sm-3 " for="source_table_<?php echo $field['field_id'] ;?>" data-toggle="popover" data-trigger="hover" data-placement="right" title="Data Settings" data-html="true" data-content="<em>Source Table</em><br>The tablpe that the data sdhould be stored in (use ITEM_DATA)<br><br><em>Data type</em><br>The data type of the input field.<br><br><em>Prefil?</em><br>select this if you would like any data already stored for the field to show up in the form">Data Settings <i class="fa fa-info-circle"></i></label>
 								<div class="col-sm-2">
 									<input class="form-control" type="form-control activity" id="source_table_<?php echo $field['field_id'] ;?>" value="<?php echo $field['source_table'] ;?>" placeholder="source_table">
 								</div>
@@ -134,11 +134,11 @@ if($id = Input::get('id')){
 										?>
 									</select>							  
 								</div>
-								<div class="col-sm-1">
+								<!--<div class="col-sm-1">
 									<select type="text" class="form-control status" id="data_child_of_<?php echo $field['field_id'] ;?>" aria-describedby="inputSuccess2Status">
 										<option class="status" value="" disabled >Child of...</option>
 									</select>								  
-								</div>
+								</div> -->
 								<div class="col-sm-1">
 									<div class="checkbox">
 										<label>
