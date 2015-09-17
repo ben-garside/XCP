@@ -17,16 +17,23 @@ if(!$xcpid) {
 <h1><span class="glyphicon glyphicon-briefcase" aria-hidden="true"></span> Item Details <small><?php echo $xcpid; ?></small></h1>
 </div>
 <div class="row">
+
 	<div class="col-md-4">
 		<div class="panel panel-default">
 		  	<div class="panel-heading">
-		    	<h3 class="panel-title">Feed Data</h3>
+		    	<h3 class="panel-title">Item Data</h3>
 		  	</div>
 		  	<table class="table">
 		  		<?php
-		  			foreach ($item->getFeedData() as $key => $value) {
-		  				echo"<tr><td><strong>" . $value["display"] ."<strong></td><td>". $value["value"] . "</td></tr>";
+		  			$data = Activity::showItemData($xcpid, 'ITEM_DATA');
+		  			if(!empty($data)){
+			  			foreach ($data as $key => $value) {
+			  				echo"<tr><td><strong>" . $key ."<strong></td><td>". $value . "</td></tr>";
+			  			}		  				
+		  			} else {
+							echo"<tr><td><em>No data found</em></td><td></td></tr>";
 		  			}
+
 		  		?>
 		  	</table>
 		</div>
@@ -48,6 +55,24 @@ if(!$xcpid) {
 		  	<div class="panel-footer"><a rel="nofollow" title="Download <?php echo $item->getCollationData()['collationContainer'] ;?>" href="getitem.php?download_file=<?php echo $item->getCollationData()['collationContainer'] ;?>"><?php echo $item->getCollationData()['collationContainer'] ;?></a></div>
 		</div>
 	</div>
+</div>
+<div class="row">
+	<div class="col-md-4">
+		<div class="panel panel-default">
+		  	<div class="panel-heading">
+		    	<h3 class="panel-title">Feed Data</h3>
+		  	</div>
+		  	<table class="table">
+		  		<?php
+		  			foreach ($item->getFeedData() as $key => $value) {
+		  				echo"<tr><td><strong>" . $value["display"] ."<strong></td><td>". $value["value"] . "</td></tr>";
+		  			}
+		  		?>
+		  	</table>
+		</div>
+	</div>
+
+
 	<div class="col-md-8">
 		<div class="panel panel-default">
 		  	<div class="panel-heading">
