@@ -271,7 +271,7 @@ function refreshTrackerTables() {
         }
         resCount++;
         showTables();
-        $('#refreshButton > a > i').removeClass('fa-spin');
+        //$('#refreshButton > a > i').removeClass('fa-spin');
     });
     getCounts();
 

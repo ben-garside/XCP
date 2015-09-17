@@ -7,13 +7,13 @@ $act = Input::get('act');
 $outArray = array();
 
 if(Input::get('uid') != 0)
-	$uidPrint = "AND allocatedTo = " . Input::get('uid');
+	$uidPrint = " AND allocatedTo = " . Input::get('uid');
 
 if(Input::get('feed') != 0)
-	$feedPrint = "AND feed_id = " . Input::get('feed');
+	$feedPrint = " AND feed_id = " . Input::get('feed');
 
 if(Input::get('stream') != 0)
-	$streamPrint = "AND stream_id = " . Input::get('stream');
+	$streamPrint = " AND stream_id = " . Input::get('stream');
 
 $sql = "SELECT ACT, 
 		sum(case when allocatedTo IS NOT NULL " . $feedPrint . " " . $uidPrint. " " . $streamPrint . " then 1 else 0 end) as STATUS_1,
