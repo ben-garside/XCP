@@ -280,4 +280,6 @@ function setUpdates() {
 $(function() {
 	setBase();
 	setUpdates();
+	$('[data-toggle="popover"]').popover()
+
 });

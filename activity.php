@@ -18,13 +18,13 @@ if (Session::exists('home-danger')) {
 
 <?php
 }
-//if($test = Activity::initRunning()) {
-//  $datetime1 = new DateTime($test);
-//  $datetime2 = new DateTime('now');
-//  $interval = $datetime1->diff($datetime2);
-//  Session::flash('home-danger','The init process is still running, it has been running since ' .$test . ' (That\'s: ' . $interval->format('%R%a days, %H hours, %i minutes') . '.)');
-//  Redirect::to('index.php');
-//}
+if($test = Activity::initRunning()) {
+ $datetime1 = new DateTime($test);
+ $datetime2 = new DateTime('now');
+ $interval = $datetime1->diff($datetime2);
+ Session::flash('home-danger','The init process is still running, it has been running since ' .$test . ' (That\'s: ' . $interval->format('%R%a days, %H hours, %i minutes') . '.)');
+ Redirect::to('index.php');
+}
 ?>
 <div class="page-header">
 
@@ -78,7 +78,7 @@ if ($user->hasPermission('admin')) {
 <ul class="nav nav-tabs" id="act_list">
 
 <li  title="Refresh Data" role="presentation" id="refreshButton">
-<a style="color:#777777;" href="javascript:void(0)" onclick="getCounts()" ondblclick="refresh()"><i class="fa fa-refresh"></i></a>
+<a style="color:#777777;" href="javascript:void(0)" onclick="refresh()"><i class="fa fa-refresh"></i></a>
 </li>
 
 <?php

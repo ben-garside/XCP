@@ -51,8 +51,8 @@ DECLARE @schema varchar(200)
 DECLARE @count varchar(200)
 
 SET @exclude = ''
-SET @sourceTable = 'XCP_TEST_PRD'
-SET @targetTable = 'XCP_TEST_DEV'
+SET @sourceTable = '[UAT-XCP]'
+SET @targetTable = '[UAT-WSCRAPE]'
 SET @schema = 'dbo'
 
 INSERT INTO @excludeTable(Name) select * from dbo.split(@exclude,',')
