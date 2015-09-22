@@ -61,3 +61,22 @@ body {
 padding-top: 4px;
 margin:0px;
 }
+
+ .results:hover {
+  cursor: pointer;
+  background-color: #FFF3D8;
+}
+
+span.highlighted {
+  background-color: #FFE59F;;
+  font-weight: bold;
+}
+span.term0 {
+  background-color: #FFE59F;;
+}
+span.term1 {
+  background-color: #FFE59F;;
+}
+span.term2 {
+  background-color: #FFE59F;;
+}

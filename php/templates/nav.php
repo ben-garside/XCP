@@ -36,6 +36,7 @@
           </ul>
         </li>
       </ul>
+
     <?php
     if($user->isLoggedIn()){
       ?>
@@ -47,7 +48,11 @@
       <?php
     }
     ?>
-
+      <form class="navbar-form navbar-right" role="search" action="search.php">
+        <div class="form-group">
+          <input type="text" class="form-control" name="term" placeholder="Search">
+        </div>
+      </form>
     </div><!--/.nav-collapse -->
 
   </div><!--/.container-fluid -->
