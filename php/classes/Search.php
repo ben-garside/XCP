@@ -10,11 +10,12 @@ class Search {
 	public function items($term) {
 		$sql = "SELECT * FROM allData WHERE ";
 
-		$sql .= "XCP_ID like '%$term%'";
-		$sql .= "OR material_id like '%$term%'";
-		$sql .= "OR materialTitle like '%$term%'";
-		$sql .= "OR projectNumber like '%$term%'";
+		$sql .= " XCP_ID like '%$term%'";
+		$sql .= " OR material_id like '%$term%'";
+		$sql .= " OR materialTitle like '%$term%'";
+		$sql .= " OR projectNumber like '%$term%'";
 
+		$sql .= " ORDER BY XCP_ID desc";
 
 		$data = $this->_db->query($sql);
 			if($data->count()){
