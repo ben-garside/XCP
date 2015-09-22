@@ -185,7 +185,7 @@ if(count($items) > 0) {
 		// Move to next activity
 		echo "    Updating item in XCP: " . $item->XCPID . "\n";
 		$item = new Activity($item->XCPID);
-		$item->moveToActivity('20', '00', 0, false, "Automatic item sending");
+		$item->moveToActivity('20', '00', -1, false, "Automatic item sending");
 
 	} //End for each
 	echo "\n*** Closing manifest\n";

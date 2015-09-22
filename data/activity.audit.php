@@ -12,12 +12,12 @@ $sql = "SELECT ACT_STATUS_2.name activityName
 ,ACT_AUDIT.ID id
 ,ACT_AUDIT.ACT + ':' + ACT_AUDIT.STATUS auditStage
 ,initUser.username initUsername
-,initUser.ID initUserId
+,ACT_AUDIT.USER_ID initUserId
 ,initUser.name_first initNameFirst
 ,initUser.name_last initNameLast
 ,ACT_AUDIT.DATE initDate
 ,alloUser.username alloUsername
-,alloUser.ID alloUserId
+,allocatedTo alloUserId
 ,alloUser.name_first alloNameFirst
 ,alloUser.name_last alloNameLast
 ,ACT_AUDIT.allocatedOn alloDate
@@ -36,17 +36,17 @@ $results = $data->results();
 
 
 	foreach($results as $result) {	
-    if($result->initUserId === 0){
-      $userPrint = "XCP";
-    } elseif(!$result->initUserId) {
+    if($result->initUserId == -1){
+      $userPrint = "<em>System<br>" . date("d-m-Y", strtotime($result->initDate)) . "</em>";
+    } elseif(!$result->initUserId || $result->initUserId == 0) {
       $userPrint = '';
     } else {
       $userPrint = ucfirst($result->initNameFirst) . " " . ucfirst($result->initNameLast) . "<br>" . date("d-m-Y", strtotime($result->initDate));
     }
 
-    if($result->alloUserId === 0){
-      $userAlloPrint = "XCP";
-    } elseif(!$result->alloUserId) {
+    if($result->alloUserId == -1){
+      $userAlloPrint = "<em>System<br>" . date("d-m-Y", strtotime($result->alloDate)) . "</em>";
+    } elseif(!$result->alloUserId || $result->alloUserId == 0) {
       $userAlloPrint = '';
     } else {
       $userAlloPrint = ucfirst($result->alloNameFirst) . " " . ucfirst($result->alloNameLast) . "<br>" . date("d-m-Y", strtotime($result->alloDate));
