@@ -124,6 +124,13 @@ class Activity {
 		return $this->_activies;
 	}
 
+	public function getAllowedActivities($userId) {
+		$activities =  $this->_activies;
+		foreach ($activities as $key => $value) {
+			print_r($value);
+		}
+	}
+
 
 	public function getActRules() {
 		return $this->_actRules;
