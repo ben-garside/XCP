@@ -50,7 +50,7 @@
     ?>
       <form class="navbar-form navbar-right" role="search" action="search.php">
         <div class="form-group">
-          <input type="text" class="form-control" name="term" placeholder="Search">
+          <input type="text" class="form-control" name="term" id="searchInput" placeholder="Search">
         </div>
       </form>
     </div><!--/.nav-collapse -->

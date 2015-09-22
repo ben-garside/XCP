@@ -4,8 +4,6 @@ function highlightOnLoad() {
     var searchString = getSearchString();
     // Starting node, parent to all nodes you want to search
     var textContainerNode = document.getElementById("results");
-    // Informational message for search
-    //var searchInfo = 'Search Results for: ';
 
     // Split search terms on '|' and iterate over resulting array
     var searchTerms = searchString.split('|');
@@ -13,14 +11,11 @@ function highlightOnLoad() {
       // The regex is the secret, it prevents text within tag declarations to be affected
       var regex = new RegExp(">([^<]*)?("+searchTerms[i]+")([^>]*)?<","ig");
       highlightTextNodes(textContainerNode, regex, i);
-      // Add to info-string
-      //searchInfo += ' <span class="highlighted term'+i+'">'+searchTerms[i]+'</span> ';
     }
 
     // Create div describing the search
     var searchTermDiv = document.createElement("H2");
     searchTermDiv.className = 'searchterms';
-    //searchTermDiv.innerHTML = searchInfo;
 
     // Insert as very first child in searched node
     textContainerNode.insertBefore(searchTermDiv, textContainerNode.childNodes[0]);
@@ -43,15 +38,13 @@ function highlightTextNodes(element, regex, termid) {
   element.innerHTML = tempinnerHTML.replace(regex,'>$1<span class="highlighted term'+termid+'">$2</span>$3<');
 }
 
-// Call this onload, I recommend using the function defined at: http://untruths.org/technology/javascript-windowonload/
 $(function() {
-  // Handler for .ready() called.
   highlightOnLoad();
+  $( '#searchInput' ).val( getSearchString() )
   $( '.results' ).click(function(event) {
-    
     var res = event.currentTarget;
     var xcp = $(res).find( '.xcp_id' ).text()
-    window.open("http://xcp.cs/item.php?xcpid="+xcp, "_parent");
+    window.open("http://xcp.dev/item.php?xcpid="+xcp, "_parent");
   });
 });
 

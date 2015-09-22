@@ -17,13 +17,23 @@ if($term = Input::get('term')){
 	<div id="results">
 		<?php
 		foreach ($results as $key => $value) {
-			echo '<div class="row">';
-				echo'<div class="bs-callout bs-callout-warning results">';
-				echo'<h1>PL<span class="stream_id">'. $value->stream_id .'</span> <small>'. $value->feed_name .'</small></h1>';
-				echo'<h4><span class="xcp_id">'. $value->xcp_id .'</span> | <span class="materialTitle">'. $value->materialTitle .'</span></h4>';			
+			if(!$user = $value->username){
+				$user = 'Unassigned';
+			}
 
-				echo '</div>';
-			echo '</div>';
+			if(!$pipe = $value->stream_id){
+				$pipe = '?';
+			}
+
+			if(!$stage = $value->stage){
+				$stage = ' N/A ';
+			}
+
+			echo '<div class="row"><div class="bs-callout bs-callout-danger results">';
+			echo '<h1>PL<span class="stream_id">'. $pipe .'</span> <small>'. $value->feed_name .'</small></h1>';
+			echo '<h4><span class="xcp_id">'. $value->xcp_id .'</span> | <span class="material_id">'. $value->material_id .'</span> | <span class="stage">'. $stage .'</span> | <span class="stage">'. $user .'</span></h4>';
+			echo '<hp><span class="materialTitle">'. $value->materialTitle .'</span></h4>';
+			echo '</div></div>';
 		}
 		?>
 	</div>
