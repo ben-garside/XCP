@@ -6,7 +6,7 @@ if(!$user->isLoggedIn()){
 ?>
 <?php 
 if($stage = Input::get('stage')){
-	if(!$user->hasPermission('admin')){
+	if(!$user->inRole('administrator')){
 	    Redirect::to('flow.php');
 	}
 	?>
@@ -165,13 +165,13 @@ if($stage = Input::get('stage')){
 	foreach ($stageInfo as $key => $value) {
 		echo '<h3>' . $key . ' - ' . $value['INFO']->SHORT_NAME . ' <small>' . $value['INFO']->DESCRIPTION . '</small></h3>';
 		echo '<table class="table table-hover"><thead>';
-		if($user->hasPermission('admin')){
+		if($user->inRole('administrator')){
 				$editHead = '<th class="col-md-1"></th>';
 			}
 		echo '<tr><th class="col-md-1">Stage</th><th class="col-md-2">Name</th><th class="col-md-6">Description</th><th class="col-md-1"></th>' . $editHead . '</tr></thead>';
 		foreach ($value['STATUSES'] as $statusId => $statusVal) {
 			
-			if($user->hasPermission('admin')){
+			if($user->inRole('administrator')){
 				$edit = '<td class="col-md-1"><a href="?stage='. $statusVal->act . ',' . $statusVal->status .'">edit</a></td>';
 			}
 			echo '<tr><td class="col-md-1">' . $statusVal->act . ':' . $statusVal->status . '</td><td class="col-md-2">' . $statusVal->name . '</td><td class="col-md-6">' . $statusVal->description . '</td><td class="col-md-1">' . $ruleAllow . '</td>' . $edit . '</tr>';
