@@ -115,7 +115,7 @@ class User {
 		$roles = $data->results();
 		if($data->count()) {
 			foreach ($roles as $key => $role) {
-				if($role->id == $roleId) { return true;	}			
+				if($role->role_id == $roleId) { return true;	}			
 			}
 			return false;
 		}
