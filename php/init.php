@@ -7,10 +7,10 @@ $GLOBALS['config'] = array(
 	'mysql' => array(
 	
 		// UAT DATABASE - DEVELOPMENT	
-		'host' => '10.103.109.84\cloud,1500',
-		'username' => 'WSCRAPE_user',
-		'password' => 'Password1',
-		'db' => 'UAT-WSCRAPE',
+		// 'host' => '10.103.109.84\cloud,1500',
+		// 'username' => 'WSCRAPE_user',
+		// 'password' => 'Password1',
+		// 'db' => 'UAT-WSCRAPE',
 
 		// // UAT DATABASE - PRODUCTION
 		// 'host' => '10.103.109.84\cloud,1500',
@@ -18,11 +18,11 @@ $GLOBALS['config'] = array(
 		// 'password' => 'Password1',
 		// 'db' => 'UAT-XCP',
 
-		// //TEST DATABASE - DEVELOPMENT
-		// 'host' => 'CHI-IND01',
-		// 'username' => 'XCP',
-		// 'password' => 'Password1',
-		// 'db' => 'XCP_TEST_DEV'
+		//TEST DATABASE - DEVELOPMENT
+		'host' => 'CHI-IND01',
+		'username' => 'XCP',
+		'password' => 'Password1',
+		'db' => 'XCP_TEST_DEV'
 
 		// // TEST DATABASE - PRODUCTION
 		// 'host' => 'CHI-IND01',
