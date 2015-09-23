@@ -103,6 +103,26 @@ class User {
 		return false;
 	}
 
+	public function inRole($roleId) {
+		if(!is_numeric($roleId)) {
+			//Get role ID
+			$data = $this->_db->get('ROLES', array('role_name', '=', $roleId));
+			if(!$roleId = $data->first()->ID){
+				return false;
+			}
+		}
+		$data = $this->_db->get('ROLE_USER_MAPPING', array('user_id', '=', $this->data()->id));
+		$roles = $data->results();
+		if($data->count()) {
+			foreach ($roles as $key => $role) {
+				if($role->id == $roleId) { return true;	}			
+			}
+			return false;
+		}
+		return false;
+	}
+
+
 	public function exists() {
 		return (!empty($this->_data)) ? true : false;
 	}
