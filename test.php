@@ -5,7 +5,7 @@ $test = new Activity($xcpid);
 
 echo "<pre>USERID: " . $user->data()->id . "<br>";
 
-print_r($user->inRole('LoggeddfbIn'));
+print_r(User::showRoles());
 
 //print_r(Activity::showFieldData('TAT'));
 

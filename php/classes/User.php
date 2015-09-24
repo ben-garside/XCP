@@ -153,10 +153,33 @@ class User {
 		}
 	}
 
-	public function listUsers() {
-		$data = DB::getInstance()->query("SELECT * FROM users");
-		if($data->count()) {
-			return $data->results();
+	public function listUsers($id = null) {
+		if($id){
+			$data = DB::getInstance()->query("SELECT * FROM users where id = $id");
+			if($data->count()) {
+				return $data->first();
+			}
+		} else {
+			$data = DB::getInstance()->query("SELECT * FROM users");
+			if($data->count()) {
+				return $data->results();
+			}
 		}
 	}
+
+	public function showRoles($userId = null) {
+		if($userId){
+			$data = DB::getInstance()->query("SELECT role_id, role_name FROM [ROLE_USER_MAPPING] join ROLES on ROLES.id = ROLE_USER_MAPPING.role_id WHERE user_id = $userId");		
+		} else {
+			$data = DB::getInstance()->query("SELECT id role_id, role_name FROM ROLES");		
+		}
+		$roles = $data->results();
+		if($data->count()) {
+			foreach ($roles as $key => $value) {
+				$return[$value->role_id] = $value->role_name;
+			}
+		return $return;
+		}
+	}
+
 }
