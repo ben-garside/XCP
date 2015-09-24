@@ -1,4 +1,4 @@
-<nav class="navbar navbar-default">
+<nav class="navbar navbar-default navbar-fixed-top">
   <div class="container-fluid">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -7,7 +7,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">XCP Web</a>
+      <a class="navbar-brand" href="#">XCP 1.2</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
@@ -40,11 +40,11 @@
     <?php
     if($user->isLoggedIn()){
       ?>
-      <p class="navbar-text navbar-right"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> <a href="changepassword.php" class="navbar-link"><?php echo $user->data()->username . " (" . $user->group() . ")"; ?></a> | <a href="logout.php" class="navbar-link">sign out</a></p>
+      <p class="navbar-text navbar-right" style="padding-right: 20px;"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> <a href="changepassword.php" class="navbar-link"><?php echo $user->data()->username . " (" . $user->group() . ")"; ?></a> | <a href="logout.php" class="navbar-link">sign out</a></p>
       <?php
     } else {
       ?>
-      <p class="navbar-text navbar-right"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> <a href="login.php" class="navbar-link">Log In</a></p>
+      <p class="navbar-text navbar-right" style="padding-right: 20px;"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> <a href="login.php" class="navbar-link">Log In</a></p>
       <?php
     }
     ?>
