@@ -15,14 +15,15 @@ if(!$user->isLoggedIn() || !$user->inRole('SystemAdministrator')){
 		<th>Id</th>
 		<th>Username</th>
 		<th>First Name</th>
-		<th>Last Name</th>
+    <th>Last Name</th>
+		<th>Email</th>
 		<th>Joined</th>
-		<th>Roles</th>
 		<th></th>
 	</tr>
 </thead>
 <tbody>
 </tbody>
+</table>
 
 <div class="modal fade" id="dataModal" tabindex="-1" role="dialog" aria-labelledby="dataModalLabel">
   <div class="modal-dialog" role="document">
@@ -32,14 +33,46 @@ if(!$user->isLoggedIn() || !$user->inRole('SystemAdministrator')){
         <h4 class="modal-title" id="dataModalLabel"></h4>
       </div>
       <div class="modal-body">
-       <p><span id="dataModalIntro">Hello</span></p><hr>
         <form>
-        <p>There will be a form here.</p>
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" id="username" placeholder="Username">
+          </div>
+          <div class="form-group">
+            <label for="name_first">First Name</label>
+            <input type="text" class="form-control" id="name_first" placeholder="First name">
+          </div>
+          <div class="form-group">
+            <label for="name_last">Last Name</label>
+            <input type="text" class="form-control" id="name_last" placeholder="Last name">
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" placeholder="Email">
+          </div>
+          <div class="form-group">
+            <label for="roles">Roles</label>
+            <select id="roles" multiple class="form-control">
+              <?php
+              $roles = User::showRoles();
+              foreach ($roles as $id => $name) {
+                echo '<option value="'.$id.'">'.$name.'</option>';
+              }
+              ?>
+            </select>
+          </div>
         </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" id="dataModalcancButton">Close</button>
-        <button type="sumbit" class="btn btn-primary" data-complete-text="Finished!" data-error-text="Error" id="dataModalsendButton">Update</button>
+        <button type="sumbit" 
+                class="btn btn-primary" 
+                data-loading-text="<i class='fa fa-spinner fa-pulse'></i> Updating"
+                data-complete-text="Finished!" 
+                data-error-text="Error" 
+                id="dataModalsendButton">
+                Update
+        </button>
       </div>
     </div>
   </div>
