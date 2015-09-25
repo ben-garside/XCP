@@ -33,7 +33,6 @@ class User {
 		if(!$id && $this->isLoggedIn()) {
 			$id = $this->data()->id;
 		}
-		
 		if(!$this->_db->update('users', $id, 'id', $fields)) {
 			throw new Exception("There was an issue updating the user.");
 		}
@@ -43,6 +42,11 @@ class User {
 		if(!$this->_db->insert('users', $fields)) {
 			throw new Exception($this->_db->errorInfo());
 		}
+	}
+
+	public function delete() {
+		$id = $this->data()->id;
+		$this->_db->delete('users', array('id','=',$id));
 	}
 
 	public function find($user = null) {
@@ -67,7 +71,7 @@ class User {
 			if($user) {
 				if($this->data()->password === Hash::make($password, $this->data()->salt)) {
 					Session::put($this->_sessionName, $this->data()->id);
-
+					$this->update(array('lastLogin' => date('Y-m-d H:i:s')), $this->data()->id);
 					if($remember) {
 						$hash = Hash::unique();
 						$hashCheck = $this->_db->get('users_session', array('user_id', '=', $this->data()->id));
@@ -180,6 +184,24 @@ class User {
 			}
 		return $return;
 		}
+	}
+
+	public function addToRole($uid, $rid) {
+		$data = DB::getInstance()->query("INSERT INTO [dbo].[ROLE_USER_MAPPING] ([role_id],[user_id]) VALUES($rid,$uid)");
+		if(!$data->error()){
+			return true;
+		}
+		return false;
+	}
+
+	public function removeFromRole($uid, $rid) {
+		$sql = "DELETE FROM [dbo].[ROLE_USER_MAPPING] WHERE user_id = $uid and role_id = $rid";
+		echo $sql;
+		$data = DB::getInstance()->query($sql);
+		if(!$data->error()){
+			return true;
+		}
+		return false;
 	}
 
 }

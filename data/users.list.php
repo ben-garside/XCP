@@ -14,6 +14,7 @@ foreach($results as $result) {
 					$result->email,
 					$result->joined,
 					'<div class="pull-right"><button type="button" onclick="editUser(\''.$result->id.'\')" class="btn btn-primary btn-sm"><i class="fa fw fa-pencil"></i> Edit</button>
+					<button type="button" onclick="changePassword(\''.$result->id.'\')" class="btn btn-success btn-sm"><i class="fa fw fa-pencil"></i> Change Password</button>
 					<button type="button" onclick="deleteUser(\''.$result->id.'\')" class="btn btn-danger btn-sm"><i class="fa fw fa-trash-o"></i> Delete</button></div>'
 	);
 }
