@@ -1,9 +1,9 @@
 <?php 
 require_once('php/templates/header.php');
 
-// if(!$user->isLoggedIn() || !$user->inRole('SystemAdministrator')){
-//     Redirect::to('index.php');
-// }
+if(!$user->isLoggedIn() || !$user->inRole('SystemAdministrator')){
+    Redirect::to('index.php');
+}
 ?>
 <div class="page-header">
 	<button type="button" onclick="addUser()" class="btn btn-success pull-right"><i class="fa fw fa-plus"></i> Add User</button>
