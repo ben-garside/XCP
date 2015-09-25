@@ -2,7 +2,7 @@
 require_once 'php/templates/header.php';
 ?>
 <div class="page-header">
-<h1><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Register an account</h1>
+<h1>Register an account</h1>
 </div>
 <?php
 if(Input::exists()) {
@@ -49,6 +49,7 @@ if(Input::exists()) {
 					'salt' => $salt,
 					'name_first' => Input::get('name_first'),
 					'name_last' => Input::get('name_last'),
+					'email' => Input::get('email'),
 					'joined' => date('Y-m-d H:i:s'),
 					'group_id' => 1
 				));
@@ -79,7 +80,7 @@ if(Input::exists()) {
 	
 	<div class="form-group">
 		<label for="username" class="col-sm-2 control-label">Username</label>
-		<div class="col-sm-8">
+		<div class="col-sm-4">
 			<input type="text" placeholder="Create a username" class="form-control" name="username" id="username" autocomplete="off" value="<?php echo escape(Input::get('username')) ?>">
 		</div>
 	</div>
@@ -94,6 +95,12 @@ if(Input::exists()) {
 		</div>
 	</div>
 	<div class="form-group">
+		<label for="email" class="col-sm-2 control-label">Email</label>
+		<div class="col-sm-4">
+			<input type="text" class="form-control" placeholder="Enter your email" name="email" id="email" autocomplete="off" value="<?php echo escape(Input::get('email')) ?>">
+		</div>
+	</div>
+	<div class="form-group">
 		<label for="password_again" class="col-sm-2 control-label">Password</label>
 		<div class="col-sm-4">
 			<input type="password" placeholder="Enter a password" class="form-control" name="password_again" id="password_again" autocomplete="off">
@@ -105,7 +112,7 @@ if(Input::exists()) {
 	<input type="hidden" name="token" value="<?php echo Token::generate(); ?>">
 	<div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
-      <button type="submit" class="btn btn-default" value="Register">Register</button>
+      <button type="submit" class="btn btn-primary" value="Register">Register</button>
     </div>
   </div>
 </form>
