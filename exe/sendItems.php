@@ -6,7 +6,15 @@ echo "\n***********************************\n";
 echo "************ + START + ************\n";
 echo "***********************************\n";
 
-$runType = 'dev'; #dev|prd
+if (php_sapi_name() == "cli") {
+    if(!$argv[1] == 'dev' && !$argv[1] == 'prd'){
+    	die('Must send arg prd or dev');
+    } else {
+    	$runType = $argv[1];
+    }
+} else {
+    die('Must be run from CLI');
+}
 
 if ($runType =='dev'){
 	$ftp_server = "ftp.hugatramp.com"; 
@@ -18,6 +26,9 @@ if ($runType =='dev'){
 	// $ftp_server = "203.55.173.10"; 
 	// $ftp_user_name = "FTP-BSI"; 
 	// $ftp_user_pass = "PL4789mn";
+	$ftp_server = "ftp.hugatramp.com"; 
+	$ftp_user_name = "xcptest1@hugatramp.com"; 
+	$ftp_user_pass = "Password1";
 	echo "\nRunning as: prd\n";
 
 } else {
@@ -31,7 +42,12 @@ $date = date("Y-m-d");
 $itemDir = '../items';
 
 //get items at the activity with stage...
-$items = Activity::showAtStage(10,20);
+if ($runType =='dev'){
+	$items = Activity::showAtStage(10,19);
+} elseif ($runType =='prd') {
+	$items = Activity::showAtStage(10,20);
+}
+
 
 //naming config
 $namingArray = array(	1 => 	array(	"name" => "BSI-01-CONV-PDF-BSISDS-",
@@ -185,7 +201,12 @@ if(count($items) > 0) {
 		// Move to next activity
 		echo "    Updating item in XCP: " . $item->XCPID . "\n";
 		$item = new Activity($item->XCPID);
-		$item->moveToActivity('20', '00', -1, false, "Automatic item sending");
+		if ($runType =='dev'){
+			$item->moveToActivity('10', '20', -1, false, "Test send, moving for actual send");
+		} elseif ($runType =='prd') {
+			$item->moveToActivity('20', '00', -1, false, "Automatic item sending");
+		}
+
 
 	} //End for each
 	echo "\n*** Closing manifest\n";
@@ -270,15 +291,17 @@ if(count($items) > 0) {
 			$mail->addAddress('content.operations@bsigroup.com');
 			$mail->AddCC('ben.garside@bsigroup.com');
 
-			$mail->Subject = 'UAT::Innodata_Batch_Alert_' . $date;
+			$mail->Subject = 'PRE-SEND::Innodata_Batch_Alert_' . $date;
 
 		} elseif ($runType == 'prd') {
-		    $mail->addAddress('JNemis@INNODATA.COM'); 
-		    $mail->addAddress('LGoboy@INNODATA.COM');
-		    $mail->addAddress('gcmontesclaros@INNODATA.COM');
-		    $mail->addAddress('MJaucian@innodata.com ');
-		    $mail->addAddress('ARQuismundo@innodata.com');
-			$mail->AddCC('content.operations@bsigroup.com');
+			// $mail->addAddress('JNemis@INNODATA.COM'); 
+			// $mail->addAddress('LGoboy@INNODATA.COM');
+			// $mail->addAddress('gcmontesclaros@INNODATA.COM');
+			// $mail->addAddress('MJaucian@innodata.com ');
+			// $mail->addAddress('ARQuismundo@innodata.com');
+			// $mail->AddCC('content.operations@bsigroup.com');
+			$mail->addAddress('content.operations@bsigroup.com'); // JUST FOR TESTING
+			$mail->AddCC('ben.garside@bsigroup.com'); // JUST FOR TESTI
 
 			$mail->Subject = 'Innodata_Batch_Alert_' . $date;
 
@@ -330,12 +353,14 @@ if(count($items) > 0) {
 		$mail->addAddress('content.operations@bsigroup.com');
 		$mail->AddCC('ben.garside@bsigroup.com');
 
-		$mail->Subject = 'UAT::Innodata_Batch_Alert_' . $date;
+		$mail->Subject = 'PRE-SEND::Innodata_Batch_Alert_' . $date;
 
 	} elseif ($runType == 'prd') {
-	    $mail->AddCC('content.operations@bsigroup.com'); 
-	    $mail->addAddress('APradeep@innodata.com'); 
-	    $mail->addAddress('LGoboy@INNODATA.COM'); 
+		// $mail->AddCC('content.operations@bsigroup.com'); 
+		// $mail->addAddress('APradeep@innodata.com'); 
+		// $mail->addAddress('LGoboy@INNODATA.COM');
+		$mail->addAddress('content.operations@bsigroup.com'); // JUST FOR TESTING
+		$mail->AddCC('ben.garside@bsigroup.com'); // JUST FOR TESTI
 
 		$mail->Subject = 'Innodata_Batch_Alert_' . $date;
 

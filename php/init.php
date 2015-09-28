@@ -12,17 +12,17 @@ $GLOBALS['config'] = array(
 		// 'password' => 'Password1',
 		// 'db' => 'UAT-WSCRAPE',
 
-		// UAT DATABASE - PRODUCTION
-		'host' => '10.103.109.84\cloud,1500',
-		'username' => 'XCP_user',
-		'password' => 'Password1',
-		'db' => 'UAT-XCP',
-
-		// //TEST DATABASE - DEVELOPMENT
-		// 'host' => 'CHI-IND01',
-		// 'username' => 'XCP',
+		// // UAT DATABASE - PRODUCTION
+		// 'host' => '10.103.109.84\cloud,1500',
+		// 'username' => 'XCP_user',
 		// 'password' => 'Password1',
-		// 'db' => 'XCP_TEST_DEV'
+		// 'db' => 'UAT-XCP',
+
+		//TEST DATABASE - DEVELOPMENT
+		'host' => 'CHI-IND01',
+		'username' => 'XCP',
+		'password' => 'Password1',
+		'db' => 'XCP_TEST_DEV'
 
 		// // TEST DATABASE - PRODUCTION
 		// 'host' => 'CHI-IND01',
