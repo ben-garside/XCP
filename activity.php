@@ -54,7 +54,7 @@ foreach (Activity::getStreams() as $stream) {
   <input type="hidden" value="" id="select_act" name="act"/>
   <?php
 
-if ($user->hasPermission('90')) {
+if ($user->inRole(1)) {
 	?>
         <div class="form-group">
           <label class="sr-only" for="select_Pipeline">Select Pipeline</label>
