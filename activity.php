@@ -83,7 +83,8 @@ if ($user->hasPermission('90')) {
 
 <?php
 $act = new Activity();
-foreach ($act->getAllowedActivities($user->data()->id) as $key => $value) {
+
+foreach ($act->getUsersActivities($user->data()->id) as $key => $value) {
 	echo '<li  title="' . $value->FULL_NAME . ' - ' . $value->DESCRIPTION . '" class="act_list_item" role="presentation" id="' . str_pad($value->ID, 2, '0', STR_PAD_LEFT) . '">';
 	echo '<a href="javascript:void(0)"  onclick="setActivity(' . str_pad($value->ID, 2, '0', STR_PAD_LEFT) . ');"><span class="label label-default">' . $value->SHORT_NAME . '</span>';
 	echo ' <span id="b_' . str_pad($value->ID, 2, '0', STR_PAD_LEFT) . '" class="label label-warning" style="display:none;">0</span>';

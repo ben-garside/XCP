@@ -124,12 +124,28 @@ class Activity {
 		return $this->_activies;
 	}
 
+	public function getUsersActivities($userId) {
+		$allowedActs = $this->getAllowedActivities($userId);
+		foreach ($this->_activies as $key => $value) {
+			if(in_array($value->ID, $allowedActs)) {
+				$out[] = $value;
+			}
+		}
+		return $out;
+	}
+ 
 	public function getAllowedActivities($userId) {
-		$activities =  $this->_activies;
-		foreach ($activities as $key => $value) {
-			print_r($value);
+		if($userId) {
+			$data = $this->_db->query("SELECT * FROM USER_ACTIVITY WHERE id = " . $userId);
+			if($data->count()){
+				foreach ($data->results() as $key => $value) {
+					$out[] = $value->ACT_ID;
+				}
+				return $out;
+			}
 		}
 	}
+
 
 
 	public function getActRules() {
