@@ -46,6 +46,7 @@
             <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
               <li <?php echoActiveClassIfRequestMatches("flow"); ?>><a href="flow.php" ><i class="fa fa-random"></i> Manage Activity Flow</a></li>
               <li <?php echoActiveClassIfRequestMatches("actionmanager"); ?>><a href="actionmanager.php" ><i class="fa fa-table"></i> Action Manager</a></li>
+              <li <?php echoActiveClassIfRequestMatches("activitymanager"); ?>><a href="activitymanager.php" ><i class="fa fw fa-bolt"></i></i> Activity Manager</a></li>
               <li class="divider"></li>
               <li><a href="addexclution.php" ><i class="fa fa-times"></i> Exclude Content</a></li>
               
