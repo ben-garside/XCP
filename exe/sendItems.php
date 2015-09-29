@@ -16,38 +16,93 @@ if (php_sapi_name() == "cli") {
     die('Must be run from CLI');
 }
 
+// SETTINGS
+
+//directories
+$dateFile = '../toSend/' . date("Ymd");
+$itemDir = '../items';
+$date = date("Y-m-d");
+
+//globals
+$globalBody 	= "<p>Dear Innodata,</p><p>This is to inform you that a new batch has been transferred to Innodata\'s FTP site, for review for producing agreed XML outputs. Attached is a transmission sheet detailing each Material (identified by UPI) in the batch.</p><p><strong>Please could you confirm receipt of these files and get back on an estimated turnaround time (TAT) and cost. Following this we will confirm whether work should proceed.</strong></p><p><u>Notes:</u></p><p>Directory path: /TO INNO/". $date . "</p><ul><li>Materials are batched into zip files according to a single Conversion Pipeline (indicated in the Batch ID and the column Conversion_Pipeline in the transmission sheet)</li><li>Each Material in the zip file needs to be processed through that Conversion Pipeline </li><li>Details in the transmission sheet confirm the file types we have provided for each Material (see columns Source_File_Type) and the required XML output (based on Schema, see column Output_File_Type)</li></ul><p>Many thanks</p>";
+$globalSubject 	= "Innodata_Batch_Alert_" . $date;
+$recNote 		= array("TO" => "ben.garside@bsigroup.com");
+$systemUser		= -1;
+//soft-hard
 if ($runType =='dev'){
+
+	//set email settings for main send 
+	$subMain = "PRE_SEND::" . $globalSubject;
+	$bodMain = $globalBody;
+	$recMain = array(	"CC" => "ben.garside@bsigroup.com",
+						"TO" => "content.operations@bsigroup.com");
+
+	//Email settings for Pipeline 8 send 
+	$subPl8 = "PRE_SEND(PL8)::" . $globalSubject;
+	$bodPl8 = $globalBody;
+	$recPl8 = array(	"TO" => "content.operations@bsigroup.com",
+						"CC" => "ben.garside@bsigroup.com");
+
+	// FTP settings
 	$ftp_server = "ftp.hugatramp.com"; 
 	$ftp_user_name = "xcptest@hugatramp.com"; 
 	$ftp_user_pass = "Password1";
+
+	// What items to check for and where to move them
+	$activityFrom 	= '10';
+	$statusFrom		= '19';
+
+	$activityTo 	= '10';	
+	$statusTo		= '20';
+
+	$ItemMoveMsg	= "Pre-send done, moving to next stage";
+
 	echo "\nRunning as: dev\n";
 
 } elseif ($runType == 'prd') {
+
+	//set email settings for main send 
+	$subMain = $globalSubject;
+	$bodMain = $globalBody;
+	$recMain = array(	"TO" 	=> 	"APradeep@innodata.com",
+						"TO" 	=> 	"LGoboy@INNODATA.COM",
+						"CC" 	=> 	"content.operations@bsigroup.com",
+						"BCC" 	=> 	"ben.garside@bsigroup.com");
+	
+	//set email settings for Pipeline 8 send 
+	$subPl8 = "(PL8)" . $globalSubject;
+	$bodPl8 = $globalBody;
+	$recPl8 = array(	"TO" 	=> 	"JNemis@INNODATA.COM",
+						"TO" 	=> 	"LGoboy@INNODATA.COM",
+						"TO" 	=> 	"gcmontesclaros@INNODATA.COM",
+						"TO" 	=> 	"MJaucian@innodata.com",
+						"TO" 	=> 	"ARQuismundo@innodata.com",
+						"CC" 	=> 	"content.operations@bsigroup.com",
+						"BCC" 	=> 	"ben.garside@bsigroup.com");
+
+	// Set FTP settings
 	// $ftp_server = "203.55.173.10"; 
 	// $ftp_user_name = "FTP-BSI"; 
 	// $ftp_user_pass = "PL4789mn";
 	$ftp_server = "ftp.hugatramp.com"; 
 	$ftp_user_name = "xcptest1@hugatramp.com"; 
 	$ftp_user_pass = "Password1";
+
+	// What items to check for and where to move them
+	$activityFrom 	= '10';
+	$statusFrom		= '20';	
+
+	$activityTo 	= '20';
+	$statusTo		= '00';
+
+	$ItemMoveMsg	= "Automatic send to INNODATA";
+
 	echo "\nRunning as: prd\n";
 
 } else {
 	die('runType must be declared as either prd or dev');
 
 }
-
-//directories
-$dateFile = '../toSend/' . date("Ymd");
-$date = date("Y-m-d");
-$itemDir = '../items';
-
-//get items at the activity with stage...
-if ($runType =='dev'){
-	$items = Activity::showAtStage(10,19);
-} elseif ($runType =='prd') {
-	$items = Activity::showAtStage(10,20);
-}
-
 
 //naming config
 $namingArray = array(	1 => 	array(	"name" => "BSI-01-CONV-PDF-BSISDS-",
@@ -117,7 +172,10 @@ $headers = array(	1  => "XCP_ID",
 					15 => "Estimated return date"
 				);
 
+// END OF SETTINGS
 
+//get items at the activity with stage...
+$items = Activity::showAtStage($activityFrom,$statusFrom);
 
 if(count($items) > 0) {
 
@@ -201,11 +259,8 @@ if(count($items) > 0) {
 		// Move to next activity
 		echo "    Updating item in XCP: " . $item->XCPID . "\n";
 		$item = new Activity($item->XCPID);
-		if ($runType =='dev'){
-			$item->moveToActivity('10', '20', -1, false, "Test send, moving for actual send");
-		} elseif ($runType =='prd') {
-			$item->moveToActivity('20', '00', -1, false, "Automatic item sending");
-		}
+		$item->moveToActivity($activityTo, $statusTo, $systemUser, false, $ItemMoveMsg);
+
 
 
 	} //End for each
@@ -272,124 +327,11 @@ if(count($items) > 0) {
 
     if(in_array('8', $pipelinesInUse)) {
     	echo "** Sending email for pipeline 8...\n";
-	    $mail = new PHPMailer;
-
-	    $mail->isSMTP();
-	    $mail->Host = '10.103.109.71';
-	    $mail->SMTPAuth = false;
-	    $mail->Port = 25;
-	    $mail->SMTPOptions = array (
-	        'ssl' => array(
-	            'verify_peer'  => false,
-	            'verify_peer_name'  => false,
-	            'allow_self_signed' => true));
-
-	    $mail->From = 'xcp_noreply@bsigroup.com';
-	    $mail->FromName = 'XCP';
-
-		if ($runType =='dev'){
-			$mail->addAddress('content.operations@bsigroup.com');
-			$mail->AddCC('ben.garside@bsigroup.com');
-
-			$mail->Subject = 'PRE-SEND::Innodata_Batch_Alert_' . $date;
-
-		} elseif ($runType == 'prd') {
-			// $mail->addAddress('JNemis@INNODATA.COM'); 
-			// $mail->addAddress('LGoboy@INNODATA.COM');
-			// $mail->addAddress('gcmontesclaros@INNODATA.COM');
-			// $mail->addAddress('MJaucian@innodata.com ');
-			// $mail->addAddress('ARQuismundo@innodata.com');
-			// $mail->AddCC('content.operations@bsigroup.com');
-			$mail->addAddress('content.operations@bsigroup.com'); // JUST FOR TESTING
-			$mail->AddCC('ben.garside@bsigroup.com'); // JUST FOR TESTI
-
-			$mail->Subject = 'Innodata_Batch_Alert_' . $date;
-
-		} else {
-			die('runType must be declared as either prd or dev');
-		}
-
-	    $mail->isHTML(true); 
-	    $mail->addAttachment($dateFile . "/transmissionSheet_" . $date . ".csv", "transmissionSheet_" . $date . ".csv");
-		$mail->Body    = '<p>Dear Innodata,</p>
-						  <p>This is to inform you that a new batch has been transferred to Innodata\'s FTP site, for review for producing agreed XML outputs. Attached is a transmission sheet detailing each Material (identified by UPI) in the batch.</p>
-						  <p><strong>Please could you confirm receipt of these files and get back on an estimated turnaround time (TAT) and cost. Following this we will confirm whether work should proceed.</strong></p>
-						  <p><u>Notes:</u></p>
-						  <p>Directory path: /TO INNO/'. $date . '</p>
-						  <ul>
-						  <li>Materials are batched into zip files according to a single Conversion Pipeline (indicated in the Batch ID and the column Conversion_Pipeline in the transmission sheet)</li>
-						  <li>Each Material in the zip file needs to be processed through that Conversion Pipeline </li>
-						  <li>Details in the transmission sheet confirm the file types we have provided for each Material (see columns Source_File_Type) and the required XML output (based on Schema, see column Output_File_Type)</li>
-						  </ul>
-						  <p>Many thanks</p>
-						  ';
-
-		if(!$mail->send()) {
-		    echo 'Message could not be sent.';
-		    echo 'Mailer Error: ' . $mail->ErrorInfo;
-		    exit;
-		}
-		echo "** Sent.\n";
-
+	    email($recPl8, $bodPl8, $subPl8, array($dateFile . "/transmissionSheet_" . $date . ".csv" => "transmissionSheet_" . $date . ".csv"));
     }
 
     echo "** Sending email for all other pipelines...\n";
-    $mail = new PHPMailer;
-
-    $mail->isSMTP();
-    $mail->Host = '10.103.109.71';
-    $mail->SMTPAuth = false;
-    $mail->Port = 25;
-    $mail->SMTPOptions = array (
-        'ssl' => array(
-            'verify_peer'  => false,
-            'verify_peer_name'  => false,
-            'allow_self_signed' => true));
-
-    $mail->From = 'xcp_noreply@bsigroup.com';
-    $mail->FromName = 'XCP';
-
-	if ($runType =='dev'){
-		$mail->addAddress('content.operations@bsigroup.com');
-		$mail->AddCC('ben.garside@bsigroup.com');
-
-		$mail->Subject = 'PRE-SEND::Innodata_Batch_Alert_' . $date;
-
-	} elseif ($runType == 'prd') {
-		// $mail->AddCC('content.operations@bsigroup.com'); 
-		// $mail->addAddress('APradeep@innodata.com'); 
-		// $mail->addAddress('LGoboy@INNODATA.COM');
-		$mail->addAddress('content.operations@bsigroup.com'); // JUST FOR TESTING
-		$mail->AddCC('ben.garside@bsigroup.com'); // JUST FOR TESTI
-
-		$mail->Subject = 'Innodata_Batch_Alert_' . $date;
-
-	} else {
-		die('runType must be declared as either prd or dev');
-	}
-
-    $mail->isHTML(true); 
-
-    $mail->addAttachment($dateFile . "/transmissionSheet_" . $date . ".csv", "transmissionSheet_" . $date . ".csv");
-	$mail->Body    = '<p>Dear Innodata,</p>
-					  <p>This is to inform you that a new batch has been transferred to Innodata\'s FTP site, for review for producing agreed XML outputs. Attached is a transmission sheet detailing each Material (identified by UPI) in the batch.</p>
-					  <p><strong>Please could you confirm receipt of these files and get back on an estimated turnaround time (TAT) and cost. Following this we will confirm whether work should proceed.</strong></p>
-					  <p><u>Notes:</u></p>
-					  <p>Directory path: /TO INNO/'. $date . '</p>
-					  <ul>
-					  <li>Materials are batched into zip files according to a single Conversion Pipeline (indicated in the Batch ID and the column Conversion_Pipeline in the transmission sheet)</li>
-					  <li>Each Material in the zip file needs to be processed through that Conversion Pipeline </li>
-					  <li>Details in the transmission sheet confirm the file types we have provided for each Material (see columns Source_File_Type) and the required XML output (based on Schema, see column Output_File_Type)</li>
-					  </ul>
-					  <p>Many thanks</p>
-					  ';
-
-	if(!$mail->send()) {
-	    echo 'Message could not be sent.';
-	    echo 'Mailer Error: ' . $mail->ErrorInfo;
-	    exit;
-	}
-	echo "** Sent.\n";
+    email($recMain, $bodMain, $subMain, array($dateFile . "/transmissionSheet_" . $date . ".csv" => "transmissionSheet_" . $date . ".csv"));
 
 	echo "\n**** TIDY UP ****\n";
 	echo "*****************\n";
@@ -411,41 +353,74 @@ if(count($items) > 0) {
 	echo "\n**** NO FILES TO SEND ****\n";
 	echo "**************************\n";
     echo "** Send out notification...\n";
-
-	$mail = new PHPMailer;
-
-    $mail->isSMTP();
-    $mail->Host = '10.103.109.71';
-    $mail->SMTPAuth = false;
-    $mail->Port = 25;
-    $mail->SMTPOptions = array (
-        'ssl' => array(
-            'verify_peer'  => false,
-            'verify_peer_name'  => false,
-            'allow_self_signed' => true));
-
-    $mail->From = 'xcp_noreply@bsigroup.com';
-    $mail->FromName = 'XCP';
-
-	//$mail->addAddress('content.operations@bsigroup.com');
-	$mail->addAddress('ben.garside@bsigroup.com');
-
-    $mail->isHTML(true); 
-    $mail->addAttachment($dateFile . "/transmissionSheet_" . $date . ".csv", "transmissionSheet_" . $date . ".csv");
-    $mail->Subject = 'UAT::Innodata_Batch_Alert_' . $date;
-	$mail->Body    = '<p>Hello,</p>
-					  <p>A send has been initiated but there were no files to be sent.</p><br />
-					  <p>Many thanks</p>';
-
-	if(!$mail->send()) {
-	    echo 'Message could not be sent.';
-	    echo 'Mailer Error: ' . $mail->ErrorInfo;
-	    exit;
-	}
-	echo "** Sent.\n";
+    email($recNote, '<p>no files</p>', 'XCP::No files');
 
 }
 
 	echo "\n*********************************\n";
 	echo "************ + END + ************\n";
 	echo "*********************************\n";
+
+function email($to = array(), $body = null, $subject = null, $attachment = array()) {
+
+	if($body && $subject && $to){
+
+		echo "Sending emails...\n";
+		$mail = new PHPMailer;
+		
+		foreach ($to as $key => $value) {
+			if($key == 'TO'){
+				$mail->addAddress($value);
+				$okToSend = true;
+			} elseif($key == 'CC') {
+				$mail->addCC($value);
+			} elseif($key == 'BCC') {
+				$mail->addBCC($value);
+			}
+		}
+
+		if(!$okToSend){
+			echo 'Must have at least one TO';
+		    exit;
+		}
+
+	    $mail->isSMTP();
+	    $mail->Host = '10.103.109.71';
+	    $mail->SMTPAuth = false;
+	    $mail->Port = 25;
+	    $mail->SMTPOptions = array (
+	        'ssl' => array(
+	            'verify_peer'  => false,
+	            'verify_peer_name'  => false,
+	            'allow_self_signed' => true
+	        )
+	    );
+
+	 	// $mail->IsSMTP();
+	 	// $mail->Host 			= 'just137.justhost.com';
+		// $mail->SMTPAuth   	= true;                  	// enable SMTP authentication
+		// $mail->Port       	= 26;                    	// set the SMTP port for the GMAIL server
+		// $mail->Username   	= "test@hugatramp.com"; 	// SMTP account username
+		// $mail->Password   	= "Password1!";        		// SMTP account password
+		
+		$mail->Subject 		= $subject;
+		$mail->MsgHTML($body);
+		$mail->SetFrom('xcp_noreply@bsigroup.com', 'XCP');	
+	    if($attachment){
+	    	foreach ($attachment as $fileIn => $valueOut) {
+	    		$mail->addAttachment($fileIn, $valueOut);
+	    	}
+	    }
+		if(!$mail->send()) {
+		    echo 'Message could not be sent.';
+		    echo 'Mailer Error: ' . $mail->ErrorInfo;
+		    exit;
+		}
+		echo "** Sent.\n";			
+	} else {
+		echo 'Missing settings in email';
+		exit;
+	}
+	
+
+}
