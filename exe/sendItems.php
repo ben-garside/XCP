@@ -276,7 +276,9 @@ if(count($items) > 0) {
 		    $mail->addAddress('JNemis@INNODATA.COM'); 
 		    $mail->addAddress('LGoboy@INNODATA.COM');
 		    $mail->addAddress('gcmontesclaros@INNODATA.COM');
-			$mail->AddCC('content.operations@bsigroup.com'); 
+		    $mail->addAddress('MJaucian@innodata.com ');
+		    $mail->addAddress('ARQuismundo@innodata.com');
+			$mail->AddCC('content.operations@bsigroup.com');
 
 			$mail->Subject = 'Innodata_Batch_Alert_' . $date;
 
