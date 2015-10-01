@@ -44,7 +44,7 @@
         <li class="dropdown">
             <a id="dLabel" data-toggle="dropdown"  data-target="#" href="#">Manage <span class="caret"></span></a>
             <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
-              <li <?php echoActiveClassIfRequestMatches("flow"); ?>><a href="flow.php" ><i class="fa fa-random fa-fw"></i> Stage Manager</a></li>
+              <li <?php echoActiveClassIfRequestMatches("stagemanager"); ?>><a href="stagemanager.php" ><i class="fa fa-random fa-fw"></i> Stage Manager</a></li>
               <li <?php echoActiveClassIfRequestMatches("actionmanager"); ?>><a href="actionmanager.php" ><i class="fa fa-table fa-fw"></i> Action Manager</a></li>
               <li <?php echoActiveClassIfRequestMatches("activitymanager"); ?>><a href="activitymanager.php" ><i class="fa fa-fw fa-bolt"></i></i> Activity Manager</a></li>
               <li class="divider"></li>

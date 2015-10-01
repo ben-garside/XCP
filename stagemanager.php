@@ -1,17 +1,17 @@
 <?php 
 require_once('php/templates/header.php');
 if(!$user->isLoggedIn()){
-    Redirect::to('login.php?nexturl=flow.php');
+    Redirect::to('login.php?nexturl=stagemanager.php');
 }
 ?>
 <?php 
 if($stage = Input::get('stage')){
 	if(!$user->inRole('administrator')){
-	    Redirect::to('flow.php');
+	    Redirect::to('v.php');
 	}
 	?>
 	<div class="page-header">
-	  <a href="flow.php" class="btn btn-success pull-right"><i class="fa fa-chevron-left"></i> Go Back</a>
+	  <a href="stagemanager.php" class="btn btn-success pull-right"><i class="fa fa-chevron-left"></i> Go Back</a>
 	<h1>Stage Manager</h1>
 	</div>
 	<?php

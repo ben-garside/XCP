@@ -1,11 +1,11 @@
 <?php 
 require_once('php/templates/header.php');
 if(!$user->isLoggedIn()){
-    Redirect::to('login.php?nexturl=flow.php');
+    Redirect::to('login.php?nexturl=index.php');
 }
 if($term = Input::get('term')){
 	if(!$user->hasPermission('admin')){
-	    Redirect::to('flow.php');
+	    Redirect::to('index.php');
 	}
 	// Show info fopr selected action
 	$search = new Search();
