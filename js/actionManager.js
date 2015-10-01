@@ -107,7 +107,7 @@ function removeRule(input) {
 	 		})
 	 		break;
 	 	case 'addRule':
-	 		//
+	 		//k
 			console.log('delete: ' + id);
 			$('#' + id).parent().fadeOut('300', function(){
 				$('#' + id).parent().remove();

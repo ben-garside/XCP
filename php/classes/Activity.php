@@ -120,9 +120,54 @@ class Activity {
 		}
 	}
 
-	public function getAllActivities() {
-		return $this->_activies;
+	public function getAllActivities($actId = null) {
+		if(!$actId) {
+			return $this->_activies;
+		} else {
+			foreach ($this->_activies as $key => $act) {
+				if($act->ID == $actId) {
+					return $act;
+				}
+			}
+		}
 	}
+
+	public function showRoles($actId = null) {
+		if($actId) {
+			$sql = "SELECT role_id, role_name FROM ACT_ROLE_MAPPING join ROLES on ROLES.id = ACT_ROLE_MAPPING.role_id WHERE ACT_ID = '" . $actId . "'";
+			$data = DB::getInstance()->query($sql);		
+			$roles = $data->results();
+			if($data->count()) {
+				foreach ($roles as $key => $value) {
+					$return[$value->role_id] = $value->role_name;
+				}
+			return $return;
+			}
+		} 
+	}
+
+	public function getUsersActivities($userId) {
+		$allowedActs = $this->getAllowedActivities($userId);
+		foreach ($this->_activies as $key => $value) {
+			if(in_array($value->ID, $allowedActs)) {
+				$out[] = $value;
+			}
+		}
+		return $out;
+	}
+ 
+	public function getAllowedActivities($userId) {
+		if($userId) {
+			$data = $this->_db->query("SELECT * FROM USER_ACTIVITY WHERE id = " . $userId);
+			if($data->count()){
+				foreach ($data->results() as $key => $value) {
+					$out[] = $value->ACT_ID;
+				}
+				return $out;
+			}
+		}
+	}
+
 
 
 	public function getActRules() {
@@ -638,6 +683,55 @@ class Activity {
 		$data = $db->query($sql);
 		if($data->count()){
 			return $data->first();
+		}
+		return false;
+	}
+
+	public static function updateActivity($actId, $data) {
+		if($actId) {
+			$db = DB::getInstance();
+			if(!$db->update('ACT_DETAIL', $actId, 'ID', $data)) {
+				throw new Exception("There was an issue updating the user.");
+			}
+		}
+	}
+
+	public function addActivity($data, $roles) {
+		echo 'hello';
+			$db = DB::getInstance();
+			if(!$db->insert('ACT_DETAIL', $data)) {
+				throw new Exception("There was an issue creating the activity.");
+			}
+			$id = $data['ID'];
+			foreach ($roles as $key => $role) {
+				Activity::addRole($id, $role);
+			}
+
+	}
+
+	public function addRole($actId, $rid) {
+		$actId = str_pad($actId, 2, "0", STR_PAD_LEFT);
+		$data = DB::getInstance()->query("INSERT INTO [ACT_ROLE_MAPPING] ([ROLE_ID],[ACT_ID]) VALUES($rid,'".str_pad($actId, 2, "0", STR_PAD_LEFT)."')");
+		if(!$data->error()){
+			return true;
+		}
+		return false;
+	}
+
+	public function removeActivity($actId) {
+		$data = DB::getInstance()->delete("ACT_DETAIL", array('ID', '=', $actId));
+		if(!$data->error()){
+			return true;
+		}
+		return false;
+	}
+
+	public function removeRole($actId, $rid) {
+		$sql = "DELETE FROM [ACT_ROLE_MAPPING] WHERE ACT_ID = $actId and ROLE_ID = $rid";
+		echo $sql;
+		$data = DB::getInstance()->query($sql);
+		if(!$data->error()){
+			return true;
 		}
 		return false;
 	}

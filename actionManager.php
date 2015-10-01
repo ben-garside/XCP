@@ -4,7 +4,7 @@ if(!$user->isLoggedIn()){
     Redirect::to('login.php?nexturl=flow.php');
 }
 if($id = Input::get('id')){
-	if(!$user->hasPermission('admin')){
+	if(!$user->inRole('administrator')){
 	    Redirect::to('flow.php');
 	}
 	// Show info fopr selected action
@@ -177,13 +177,13 @@ if($id = Input::get('id')){
 	// Show list of ACT and STAT
 	$actionInfo = Activity::listActions();
 	echo '<table class="table table-hover"><thead>';
-	if($user->hasPermission('admin')){
+	if($user->inRole('administrator')){
 				$editHead = '<th class="col-md-1"></th>';
 	}
 	echo '<tr><th class="col-md-1">ID</th><th class="col-md-1">Type</th><th class="col-md-1">Name</th><th class="col-md-1">Title</th><th class="col-md-5">Description</th>' . $editHead . '</tr></thead>';
 	foreach ($actionInfo as $key => $value) {
 			
-			if($user->hasPermission('admin')){
+			if($user->inRole('administrator')){
 				$edit = '<td class="col-md-1"><a href="?id='. $value['id'] .'">edit</a></td>';
 			}
 			echo '<tr><td class="col-md-1">' . $value['id'] . '</td><td class="col-md-1">' . $value['type'] . '</td><td class="col-md-1">' . $value['name'] . '</td><td class="col-md-2">' . $value['title'] . '</td><td class="col-md-4">' . $value['description'] . '</td>' . $edit . '</tr>';
