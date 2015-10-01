@@ -9,26 +9,26 @@ $outArray = array();
 
 $sql = "SELECT ACT_STATUS_2.name activityName
 ,ACT_DETAIL.SHORT_NAME statusName
-,ACT_AUDIT.ID id
-,ACT_AUDIT.ACT + ':' + ACT_AUDIT.STATUS auditStage
+,ACT_AUDIT_2.ID id
+,activity + ':' + ACT_AUDIT_2.STATUS auditStage
 ,initUser.username initUsername
-,ACT_AUDIT.USER_ID initUserId
+,startedBy initUserId
 ,initUser.name_first initNameFirst
 ,initUser.name_last initNameLast
-,ACT_AUDIT.DATE initDate
+,startedOn initDate
 ,alloUser.username alloUsername
 ,allocatedTo alloUserId
 ,alloUser.name_first alloNameFirst
 ,alloUser.name_last alloNameLast
-,ACT_AUDIT.allocatedOn alloDate
-,ACT_AUDIT.DATA
-FROM ACT_AUDIT
-LEFT JOIN USERS initUser  ON initUser.id = ACT_AUDIT.USER_ID
+,allocatedOn alloDate
+,info
+FROM ACT_AUDIT_2
+LEFT JOIN USERS initUser  ON initUser.id = ACT_AUDIT_2.startedBy
 LEFT JOIN USERS alloUser  ON alloUser.id = allocatedTo
-LEFT JOIN ACT_STATUS_2 ON ACT_STATUS_2.status = ACT_AUDIT.STATUS AND ACT_STATUS_2.act = ACT_AUDIT.ACT
-LEFT JOIN ACT_DETAIL ON ACT_DETAIL.ID = ACT_AUDIT.ACT
+LEFT JOIN ACT_STATUS_2 ON ACT_STATUS_2.status = ACT_AUDIT_2.STATUS AND ACT_STATUS_2.act = ACT_AUDIT_2.activity
+LEFT JOIN ACT_DETAIL ON ACT_DETAIL.ID = ACT_AUDIT_2.activity
 WHERE XCPID = '" . $xcpid . "'
-ORDER BY ACT_AUDIT.ID DESC";
+ORDER BY ACT_AUDIT_2.ID DESC";
 
 $data = $db->query($sql);					
 $results = $data->results();
