@@ -1,11 +1,11 @@
 <?php 
 require_once('php/templates/header.php');
 if(!$user->isLoggedIn()){
-    Redirect::to('login.php?nexturl=flow.php');
+    Redirect::to('login.php?nexturl=activitymanager.php');
 }
 
 if(!$user->inRole('administrator')){
-    Redirect::to('flow.php');
+    Redirect::to('activitymanager.php');
 }
 
 if(Input::get('id')){

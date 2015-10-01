@@ -824,5 +824,19 @@ class Activity {
 
 	}
 
+	public static function deleteStage($stage) {
+		$stage = Activity::splitStage($stage, ',');
+		echo $stage['activity'];
+		$data = DB::getInstance()->query("DELETE FROM ACT_STATUS_2 WHERE act = '" . $stage['activity'] . "' AND status = '" . $stage['status'] . "'");
+		if(!$data->error()){
+			$data = DB::getInstance()->query("DELETE FROM ACT_MAPPING WHERE act_in = '" . $stage['activity'] . "' AND status_in = '" . $stage['status'] . "'");
+			if(!$data->error()){
+				return true;
+			}
+		}
+		return false;
+
+	}
+
 }
 ?>
