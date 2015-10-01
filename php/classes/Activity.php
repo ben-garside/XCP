@@ -37,7 +37,7 @@ class Activity {
 		$data = $this->_db->get('STREAM_ALLOCATION', array('XCP_ID', '=', $xcpid));
 		if($data->count()) {
 			$stream = $data->first()->STREAM_ID;
-			$data = $this->_db->query("SELECT act_out, status_out FROM ACT_MAPPING_VIEW WHERE act_in = '" . $this->_currentDetails->ACT . "' AND status_in = '" . $this->_currentDetails->STATUS . "' AND pipeline_id = " . $this->_xcpInfo->stream_id);
+			$data = $this->_db->query("SELECT act_out, status_out FROM ACT_MAPPING_VIEW WHERE act_in = '" . $this->_currentDetails->activity . "' AND status_in = '" . $this->_currentDetails->status . "' AND pipeline_id = " . $this->_xcpInfo->stream_id);
 			if($data->count()) {
 				$return = $data->results();
 				$rulesArray = array();
@@ -176,7 +176,7 @@ class Activity {
 
 	private function _getCurrentDetails() {
 		if($this->xcpid) {
-			$data = $this->_db->query("SELECT TOP 1 * FROM ACT_AUDIT WHERE XCPID = '" . $this->xcpid . "' ORDER BY ID DESC");
+			$data = $this->_db->query("SELECT TOP 1 * FROM ACT_AUDIT_2 WHERE XCPID = '" . $this->xcpid . "' ORDER BY ID DESC");
 			if($data->count()){
 				$this->_currentDetails = $data->first();
 			}
@@ -184,11 +184,15 @@ class Activity {
 	}
 
 	public function getCurrentActivity() {
-		return $this->_currentDetails->ACT;
+		return $this->_currentDetails->activity;
 	}
 
 	public function getCurrentStatus() {
-		return $this->_currentDetails->STATUS;
+		return $this->_currentDetails->status;
+	}
+
+	public function getCurrentAuditId() {
+		return $this->_currentDetails->id;
 	}
 
 	public function getCurrentAll() {
@@ -198,12 +202,12 @@ class Activity {
 	public function unAssign() {
 		$this->_getCurrentDetails();
 		$user = new User();
-		$sql = 		"UPDATE [dbo].[ACT_AUDIT]
+		$sql = 		"UPDATE [dbo].[ACT_AUDIT_2]
 					SET allocatedTo = NULL, allocatedBy = NULL, allocatedOn = NULL
 					WHERE ID = (SELECT TOP 1 AUDIT.ID
 					FROM mainData
-					OUTER APPLY (SELECT TOP 1 * FROM ACT_AUDIT WHERE XCPID = mainData.XCP_ID order by id desc) AUDIT
-					WHERE AUDIT.ACT = " . $this->getCurrentActivity() . " AND AUDIT.XCPID IS NOT NULL AND XCP_ID = '$this->xcpid')";
+					OUTER APPLY (SELECT TOP 1 * FROM ACT_AUDIT_2 WHERE XCPID = mainData.XCP_ID order by id desc) AUDIT
+					WHERE AUDIT.activity = " . $this->getCurrentActivity() . " AND AUDIT.XCPID IS NOT NULL AND XCP_ID = '$this->xcpid')";
 		$data = $this->_db->query($sql);
 		if($data->count()){
 			return 'OK';
@@ -215,12 +219,12 @@ class Activity {
 	public function claim() {
 		$this->_getCurrentDetails();
 		$user = new User();
-		$sql = 		"UPDATE [dbo].[ACT_AUDIT]
+		$sql = 		"UPDATE [dbo].[ACT_AUDIT_2]
 					SET allocatedTo = " . $user->data()->id . ", allocatedBy = " . $user->data()->id . ", allocatedOn = getdate()
 					WHERE ID = (SELECT TOP 1 AUDIT.ID
 					FROM mainData
-					OUTER APPLY (SELECT TOP 1 * FROM ACT_AUDIT WHERE XCPID = mainData.XCP_ID order by id desc) AUDIT
-					WHERE AUDIT.ACT = " . $this->getCurrentActivity() . " AND AUDIT.XCPID IS NOT NULL AND XCP_ID = '$this->xcpid')";
+					OUTER APPLY (SELECT TOP 1 * FROM ACT_AUDIT_2 WHERE XCPID = mainData.XCP_ID order by id desc) AUDIT
+					WHERE AUDIT.activity = " . $this->getCurrentActivity() . " AND AUDIT.XCPID IS NOT NULL AND XCP_ID = '$this->xcpid')";
 		$data = $this->_db->query($sql);
 		if($data->count()){
 			return 'OK';
@@ -232,12 +236,12 @@ class Activity {
 	public function assign($assignerId) {
 		$this->_getCurrentDetails();
 		$user = new User();
-		$sql = 		"UPDATE [dbo].[ACT_AUDIT]
+		$sql = 		"UPDATE [dbo].[ACT_AUDIT_2]
 					SET allocatedTo = " . $user->data()->id . ", allocatedBy = " . $assignerId . ", allocatedOn = getdate()
 					WHERE ID = (SELECT TOP 1 AUDIT.ID
 					FROM mainData
-					OUTER APPLY (SELECT TOP 1 * FROM ACT_AUDIT WHERE XCPID = mainData.XCP_ID order by id desc) AUDIT
-					WHERE AUDIT.ACT = " . $this->getCurrentActivity() . " AND AUDIT.XCPID IS NOT NULL AND XCP_ID = '$this->xcpid')";
+					OUTER APPLY (SELECT TOP 1 * FROM ACT_AUDIT_2 WHERE XCPID = mainData.XCP_ID order by id desc) AUDIT
+					WHERE AUDIT.activity = " . $this->getCurrentActivity() . " AND AUDIT.XCPID IS NOT NULL AND XCP_ID = '$this->xcpid')";
 		$data = $this->_db->query($sql);
 		if($data->count()){
 			return 'OK';
@@ -252,7 +256,7 @@ class Activity {
 			$user = new User();
 			$userId = $user->data()->id;
 			try {
-				$this->moveToActivity(Activity::splitStage($stage)[activity], Activity::splitStage($stage)[status], $userId, true, 'rules');
+				$this->moveToActivity(Activity::splitStage($stage)[activity], Activity::splitStage($stage)[status], $userId, true, '');
 			} catch(Exception $e) {
 				return $e->getMessage();
 			}
@@ -342,21 +346,37 @@ class Activity {
     					return false;
 					}
 				}
+				$date = date("Y/m/d H:i:s"). substr((string)microtime(), 1, 3);
 				$fields = array( 	'XCPID' 	=> $this->xcpid,
-									'ACT'		=> $activity,
-									'STATUS'	=> $status,
-									'DATE'		=> date("Y/m/d H:i:s"). substr((string)microtime(), 1, 3),
-									'USER_ID'	=> $user,
-									'DATA'		=> $comment
+									'activity'	=> $activity,
+									'status'	=> $status,
+									'startedOn'	=> $date,
+									'startedBy'	=> $user,
+									'info'		=> $comment
 								);	
-				if(!$this->_db->insert('ACT_AUDIT', $fields)) {
+				if(!$this->_db->insert('ACT_AUDIT_2', $fields)) {
 					throw new Exception("Some database error: " . $this->_db->errorInfo()[2]);			
-				}
-				if($this->maintainAssign($this->getCurrentActivity(),$this->getCurrentStatus())) {
-					$this->claim();
+				} else {
+					$sqltoGetId = "SELECT TOP 1 id FROM ACT_AUDIT_2 where activity = $activity AND status = $status AND xcpid = '$this->xcpid' order by id desc";
+					$newId = $this->_db->query($sqltoGetId)->first()->id;
+					if($this->updateOldAudit($this->getCurrentAuditId(), $newId, $activity, $status, $date, $user)){
+						if($this->maintainAssign($this->getCurrentActivity(),$this->getCurrentStatus())) {
+							$this->claim();
+						}
+					}
 				}
 				return 'OK';
 			}
+	}
+
+	private function updateOldAudit($oldId, $newId, $newActivity, $newStatus, $date, $user) {
+		$sql = "UPDATE ACT_AUDIT_2 SET endedBy = '$user', endedOn = '$date', sentToId = '$newId', sentToActivity = '$newActivity', sentToStatus = '$newStatus' WHERE id = '$oldId'";
+		//echo $sql;
+		$this->_db->query($sql);
+		if(!$this->_db->error()){
+			return true;	
+		}
+		return false;
 	}
 
 	public function setStatus($status) {
@@ -381,8 +401,8 @@ class Activity {
 		$sql = "SELECT *
 				FROM mainData
 				OUTER APPLY (SELECT TOP 1 * FROM ACT_AUDIT WHERE XCPID = mainData.XCP_ID order by id desc) AUDIT
-				LEFT JOIN USERS ON USERS.id = AUDIT.USER_ID
-				WHERE AUDIT.ACT = $act and STATUS = $status AND AUDIT.XCPID IS NOT NULL";
+				LEFT JOIN USERS ON USERS.id = AUDIT.startedBy
+				WHERE AUDIT.activity = $act and STATUS = $status AND AUDIT.XCPID IS NOT NULL";
 
 		$db = DB::getInstance();
 		$data = $db->query($sql);

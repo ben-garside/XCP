@@ -11,12 +11,12 @@ $outArray = array();
 
 switch ($type) {
 	case 'mine':
-		$sql = "SELECT DISTINCT mainData.*, XCPID, USERS.id, USERS.name_first, USERS.name_last, USERS.username, ACT_STATUS_2.ACT + ':' +  ACT_STATUS_2.STATUS as status, ACT_STATUS_2.DESCRIPTION statusDescription, ACT_STATUS_2.name as statusName, AUDIT.allocatedOn DATE, AUDIT.ACT, AUDIT.STATUS
+		$sql = "SELECT DISTINCT mainData.*, XCPID, USERS.id, USERS.name_first, USERS.name_last, USERS.username, ACT_STATUS_2.ACT + ':' +  ACT_STATUS_2.STATUS as stage, ACT_STATUS_2.DESCRIPTION statusDescription, ACT_STATUS_2.name as statusName, AUDIT.allocatedOn DATE, AUDIT.activity, AUDIT.STATUS
 				FROM mainData
-				OUTER APPLY (SELECT TOP 1 * FROM ACT_AUDIT WHERE XCPID = mainData.XCP_ID order by id desc) AUDIT
+				OUTER APPLY (SELECT TOP 1 * FROM ACT_AUDIT_2 WHERE XCPID = mainData.XCP_ID order by id desc) AUDIT
 				LEFT JOIN USERS ON USERS.id = AUDIT.allocatedTo
-				LEFT JOIN ACT_STATUS_2 on ACT_STATUS_2.status = AUDIT.STATUS AND ACT_STATUS_2.act = AUDIT.ACT
-				WHERE AUDIT.ACT = ".$act." AND AUDIT.XCPID IS NOT NULL AND allocatedTo IS NOT NULL";
+				LEFT JOIN ACT_STATUS_2 on ACT_STATUS_2.status = AUDIT.STATUS AND ACT_STATUS_2.act = AUDIT.activity
+				WHERE AUDIT.ACTIVITY = ".$act." AND AUDIT.XCPID IS NOT NULL AND allocatedTo IS NOT NULL";
 
 		if(Input::get('uid') != 0)
 			$sql .= " AND allocatedTo = " . Input::get('uid');
@@ -30,12 +30,12 @@ switch ($type) {
 		break;
 	
 	default:
-		$sql = "SELECT DISTINCT mainData.*, USERS.*, ACT_STATUS_2.ACT + ':' +  ACT_STATUS_2.STATUS as status, ACT_STATUS_2.name as statusName, ACT_STATUS_2.DESCRIPTION statusDescription, AUDIT.*
+		$sql = "SELECT DISTINCT mainData.*, USERS.*, ACT_STATUS_2.ACT + ':' +  ACT_STATUS_2.STATUS as stage, ACT_STATUS_2.name as statusName, ACT_STATUS_2.DESCRIPTION statusDescription, AUDIT.*
 				FROM mainData
-				OUTER APPLY (SELECT TOP 1 * FROM ACT_AUDIT WHERE XCPID = mainData.XCP_ID order by id desc) AUDIT
-				LEFT JOIN USERS ON USERS.id = AUDIT.USER_ID
-				LEFT JOIN ACT_STATUS_2 on ACT_STATUS_2.status = AUDIT.STATUS AND ACT_STATUS_2.act = AUDIT.ACT
-				WHERE AUDIT.ACT = ".$act." AND AUDIT.XCPID IS NOT NULL AND allocatedTo IS NULL";
+				OUTER APPLY (SELECT TOP 1 * FROM ACT_AUDIT_2 WHERE XCPID = mainData.XCP_ID order by id desc) AUDIT
+				LEFT JOIN USERS ON USERS.id = AUDIT.startedBy
+				LEFT JOIN ACT_STATUS_2 on ACT_STATUS_2.status = AUDIT.STATUS AND ACT_STATUS_2.act = AUDIT.activity
+				WHERE AUDIT.ACTIVITY = ".$act." AND AUDIT.XCPID IS NOT NULL AND allocatedTo IS NULL";
 
 		if(Input::get('feed') != 0)
 			$sql .= " AND feed_id = " . Input::get('feed');
@@ -45,7 +45,7 @@ switch ($type) {
 
 		break;
 }
-
+#echo $sql;
 $data = $db->query($sql);					
 $results = $data->results();
 
@@ -86,7 +86,7 @@ $results = $data->results();
 					'<time class="timeago" title="' . $result->DATE . '" datetime="' . $result->DATE . '">' . $result->DATE . '</time>',
 					$result->pageCount,
             		'<span class="pipeline">' . $result->stream_id . '</span> (' . $result->feed_name . ')',
-            		'<span class="status" title="' . wordwrap($result->statusDescription, 200, "\n") . '"><span class="stage">' . $result->status . "</span> - " . $result->statusName . "</span>",
+            		'<span class="status" title="' . wordwrap($result->statusDescription, 200, "\n") . '"><span class="stage">' . $result->stage . "</span> - " . $result->statusName . "</span>",
             		$form
 		);
 	} 
