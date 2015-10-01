@@ -33,7 +33,6 @@ class User {
 		if(!$id && $this->isLoggedIn()) {
 			$id = $this->data()->id;
 		}
-		
 		if(!$this->_db->update('users', $id, 'id', $fields)) {
 			throw new Exception("There was an issue updating the user.");
 		}
@@ -43,6 +42,11 @@ class User {
 		if(!$this->_db->insert('users', $fields)) {
 			throw new Exception($this->_db->errorInfo());
 		}
+	}
+
+	public function delete() {
+		$id = $this->data()->id;
+		$this->_db->delete('users', array('id','=',$id));
 	}
 
 	public function find($user = null) {
@@ -67,7 +71,7 @@ class User {
 			if($user) {
 				if($this->data()->password === Hash::make($password, $this->data()->salt)) {
 					Session::put($this->_sessionName, $this->data()->id);
-
+					$this->update(array('lastLogin' => date('Y-m-d H:i:s')), $this->data()->id);
 					if($remember) {
 						$hash = Hash::unique();
 						$hashCheck = $this->_db->get('users_session', array('user_id', '=', $this->data()->id));
@@ -103,13 +107,33 @@ class User {
 		return false;
 	}
 
+	public function inRole($roleId) {
+		if(!is_numeric($roleId)) {
+			//Get role ID
+			$data = $this->_db->get('ROLES', array('role_name', '=', $roleId));
+			if(!$roleId = $data->first()->ID){
+				return false;
+			}
+		}
+		$data = $this->_db->get('ROLE_USER_MAPPING', array('user_id', '=', $this->data()->id));
+		$roles = $data->results();
+		if($data->count()) {
+			foreach ($roles as $key => $role) {
+				if($role->role_id == $roleId) { return true;	}			
+			}
+			return false;
+		}
+		return false;
+	}
+
+
 	public function exists() {
 		return (!empty($this->_data)) ? true : false;
 	}
 
 	public function logout() {
 
-		$this->_db->delete('users_session', array('user_id', '=', $this->data()->id));
+		//$this->_db->delete('users_session', array('user_id', '=', $this->data()->id));
 
 		Session::delete($this->_sessionName);
 		Cookie::delete($this->_cookieName);
@@ -133,10 +157,51 @@ class User {
 		}
 	}
 
-	public function listUsers() {
-		$data = DB::getInstance()->query("SELECT * FROM users");
-		if($data->count()) {
-			return $data->results();
+	public function listUsers($id = null) {
+		if($id){
+			$data = DB::getInstance()->query("SELECT * FROM users where id = $id");
+			if($data->count()) {
+				return $data->first();
+			}
+		} else {
+			$data = DB::getInstance()->query("SELECT * FROM users");
+			if($data->count()) {
+				return $data->results();
+			}
 		}
 	}
+
+	public function showRoles($userId = null) {
+		if($userId){
+			$data = DB::getInstance()->query("SELECT role_id, role_name FROM [ROLE_USER_MAPPING] join ROLES on ROLES.id = ROLE_USER_MAPPING.role_id WHERE user_id = $userId");		
+		} else {
+			$data = DB::getInstance()->query("SELECT id role_id, role_name FROM ROLES");		
+		}
+		$roles = $data->results();
+		if($data->count()) {
+			foreach ($roles as $key => $value) {
+				$return[$value->role_id] = $value->role_name;
+			}
+		return $return;
+		}
+	}
+
+	public function addToRole($uid, $rid) {
+		$data = DB::getInstance()->query("INSERT INTO [dbo].[ROLE_USER_MAPPING] ([role_id],[user_id]) VALUES($rid,$uid)");
+		if(!$data->error()){
+			return true;
+		}
+		return false;
+	}
+
+	public function removeFromRole($uid, $rid) {
+		$sql = "DELETE FROM [dbo].[ROLE_USER_MAPPING] WHERE user_id = $uid and role_id = $rid";
+		echo $sql;
+		$data = DB::getInstance()->query($sql);
+		if(!$data->error()){
+			return true;
+		}
+		return false;
+	}
+
 }

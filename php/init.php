@@ -6,23 +6,23 @@ date_default_timezone_set('Europe/London');
 $GLOBALS['config'] = array(
 	'mysql' => array(
 	
-		// // UAT DATABASE - DEVELOPMENT	
+		// UAT DATABASE - DEVELOPMENT	
 		// 'host' => '10.103.109.84\cloud,1500',
 		// 'username' => 'WSCRAPE_user',
 		// 'password' => 'Password1',
 		// 'db' => 'UAT-WSCRAPE',
 
-		// UAT DATABASE - PRODUCTION
-		'host' => '10.103.109.84\cloud,1500',
-		'username' => 'XCP_user',
-		'password' => 'Password1',
-		'db' => 'UAT-XCP',
-
-		// //TEST DATABASE - DEVELOPMENT
-		// 'host' => 'CHI-IND01',
-		// 'username' => 'XCP',
+		// // UAT DATABASE - PRODUCTION
+		// 'host' => '10.103.109.84\cloud,1500',
+		// 'username' => 'XCP_user',
 		// 'password' => 'Password1',
-		// 'db' => 'XCP_TEST_DEV'
+		// 'db' => 'UAT-XCP',
+
+		//TEST DATABASE - DEVELOPMENT
+		'host' => 'CHI-IND01',
+		'username' => 'XCP',
+		'password' => 'Password1',
+		'db' => 'XCP_TEST_DEV'
 
 		// // TEST DATABASE - PRODUCTION
 		// 'host' => 'CHI-IND01',
@@ -40,8 +40,8 @@ $GLOBALS['config'] = array(
 		'token_name' => 'token',
 	),
 	'release' => array(
-		'version' => 'v1.2.1',
-		'date' => '2015-09-24',
+		'version' => 'v1.2.1-beta.2',
+		'date' => '2015-09-17',
 
 	),
 );

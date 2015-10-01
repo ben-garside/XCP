@@ -255,6 +255,7 @@ function unassign(xcpid) {
 
 function refreshTrackerTables() {
 
+    $( '#act_list li[id!="refreshButton"]' ).addClass('disabled')
     $('#tasks_team_panel').fadeOut("fast");
     $('#tasks_mine_panel').fadeOut("fast");
     $('#tasks_mine_panel_test').fadeIn("fast");
@@ -270,24 +271,32 @@ function refreshTrackerTables() {
             tasks_mine.column(4).visible(false);
         }
         resCount++;
-        showTables();
+        showTables(function(e){
+            // $( '#act_list li[id!="refreshButton"]' ).removeClass('disabled')
+        });
+        
         //$('#refreshButton > a > i').removeClass('fa-spin');
     });
     getCounts();
 
 }
 
-function showTables() {
+function showTables(callback) {
     if (resCount == 2) {
-        $('#tasks_mine_panel_test').fadeOut("fast");
-        $('time.timeago').timeago();
-        $('#tasks_mine_panel').fadeIn("fast");
-        $('#tasks_team_panel').fadeIn("fast");
-        resCount = 0;
+        $('#tasks_mine_panel_test').fadeOut('fast', function() {
+            $('#tasks_mine_panel_test').fadeOut("fast");
+            $('time.timeago').timeago();
+            $('#tasks_mine_panel').fadeIn("fast");
+            $('#tasks_team_panel').fadeIn("fast");
+            resCount = 0;
+            callback();  
+        });
+        
     }
 }
 
 function setTrackerTables() {
+    $( '#act_list li[id!="refreshButton"]' ).addClass('disabled')
     window.tasks_team = $('#tasks_team').DataTable({
         "ajax": 'data/activity.data.php?type=team&stream=' + $('#select_Pipeline').val() + '&feed=' + $('#select_feed').val() + '&act=' + $('#select_act').val()
         , "bAutoWidth": false
@@ -350,6 +359,7 @@ function getCounts() {
             });
             $("span[class*='label'][id*='_']").fadeIn('fast');
             $('#refreshButton > a > i').removeClass('fa-spin');
+            $( '#act_list li[id!="refreshButton"]' ).removeClass('disabled')
         });
 }
 
@@ -525,8 +535,9 @@ function showDataModal(xcpid, action_id, callback) {
 
 $(function(){ 
 
-    $('#10').addClass('active');
-    $('#select_act').val(10);
+    var first = $( '#act_list li[id!="refreshButton"]:eq(0)' ).attr('id');
+    $('#' + first).addClass('active');
+    $('#select_act').val(first);
 
     setTrackerTables();
     getCounts();
