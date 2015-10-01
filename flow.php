@@ -11,7 +11,8 @@ if($stage = Input::get('stage')){
 	}
 	?>
 	<div class="page-header">
-	<h1><span class="glyphicon glyphicon-random" aria-hidden="true"></span> Activity flow</h1>
+	  <a href="flow.php" class="btn btn-success pull-right"><i class="fa fa-chevron-left"></i> Go Back</a>
+	<h1>Activity flow</h1>
 	</div>
 	<?php
 	// Show info fopr selected stage
@@ -158,7 +159,7 @@ if($stage = Input::get('stage')){
 	// Show list of ACT and STAT
 	?>
 	<div class="page-header">
-	<h1><span class="glyphicon glyphicon-random" aria-hidden="true"></span> Activity flow <button type="button" onclick="addStage()" class="btn btn-primary"><i class="fa fw fa-plus"></i> Add stage</button></h1>
+	<h1>Activity flow <button type="button" onclick="addStage()" class="btn btn-primary pull-right"><i class="fa fw fa-plus"></i> Add stage</button></h1>
 	</div>
 	<?php
 	$stageInfo = Activity::showStages();
@@ -172,7 +173,7 @@ if($stage = Input::get('stage')){
 		foreach ($value['STATUSES'] as $statusId => $statusVal) {
 			
 			if($user->inRole('administrator')){
-				$edit = '<td class="col-md-1"><a href="?stage='. $statusVal->act . ',' . $statusVal->status .'">edit</a></td>';
+				$edit = '<td class="col-md-1"><a href="?stage='. $statusVal->act . ',' . $statusVal->status .'" class="btn btn-success btn-sm pull-right" >Edit</a></td>';
 			}
 			echo '<tr><td class="col-md-1">' . $statusVal->act . ':' . $statusVal->status . '</td><td class="col-md-2">' . $statusVal->name . '</td><td class="col-md-6">' . $statusVal->description . '</td><td class="col-md-1">' . $ruleAllow . '</td>' . $edit . '</tr>';
 			unset($ruleAllow);
