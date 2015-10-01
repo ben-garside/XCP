@@ -16,18 +16,7 @@ if($userData = Input::get('info')) {
 	$newRoles = $userData['roles'];
 	unset($userData['roles']);
 	if(Input::get('add')) {
-		echo 'ADD USER<br>';
-		// $salt = Hash::salt(32);
-		// $user->create(array(
-		// 			'username' 		=> $userData['username'],
-		// 			'password' 		=> Hash::make($userData['password'], $salt),
-		// 			'salt' 			=> $salt,
-		// 			'name_first' 	=> $userData['name_first'],
-		// 			'name_last' 	=> $userData['name_last'],
-		// 			'email' 		=> $userData['email'],
-		// 			'joined' 		=> date('Y-m-d H:i:s'),
-		// 			'group_id' 		=> 1
-		// 		));
+		Activity::addActivity($userData, $newRoles);
 	} else {
 		try {
 			Activity::updateActivity($actId, $userData);
@@ -51,9 +40,9 @@ if($userData = Input::get('info')) {
 	}
 }	
 
-// if(Input::get('delete')) {
-// 	$user->delete();
-// 	foreach ($oldRoles as $key => $oldRole) {
-// 		User::removeFromRole($actId, $key);
-// 	}		
-// }
+if(Input::get('delete')) {
+	Activity::removeActivity($actId);
+	foreach ($oldRoles as $key => $oldRole) {
+		Activity::removeRole($actId, $key);
+	}		
+}

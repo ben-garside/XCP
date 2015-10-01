@@ -36,17 +36,17 @@ $('#dataModal').on('hidden.bs.modal', function () {
     cancBut.button('reset');
     cancBut.removeClass('disabled');
     $('#dataModal form').trigger("reset");
-    $('#password').parent( '.form-group' ).remove()
+    $('#ID').parent( '.form-group' ).remove()
     redrawTable();
 })
 
 function addActivity() {
-	console.log('Add user...');
+	console.log('Add activity...');
 	var modal = $('#dataModal');
     var butSend = $('#dataModalsendButton');
     var cancBut = $('#dataModalcancButton');
-    modal.find('.modal-title').text('Add new user.')
-    $('#dataModal form').append('<div class="form-group"><label for="password">Password</label><input type="password" class="form-control" id="password" placeholder="Password"></div>')
+    modal.find('.modal-title').text('Add new activity.')
+    $('#dataModal form').prepend('<div class="form-group"><label for="ID">ID</label><input type="number" class="form-control" id="ID" placeholder="ID" min="00" max="99"></div>')
 	modal.modal();
 
     cancBut.click(function() {

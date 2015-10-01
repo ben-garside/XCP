@@ -696,9 +696,30 @@ class Activity {
 		}
 	}
 
+	public function addActivity($data, $roles) {
+		echo 'hello';
+			$db = DB::getInstance();
+			if(!$db->insert('ACT_DETAIL', $data)) {
+				throw new Exception("There was an issue creating the activity.");
+			}
+			$id = $data['ID'];
+			foreach ($roles as $key => $role) {
+				Activity::addRole($id, $role);
+			}
+
+	}
+
 	public function addRole($actId, $rid) {
 		$actId = str_pad($actId, 2, "0", STR_PAD_LEFT);
 		$data = DB::getInstance()->query("INSERT INTO [ACT_ROLE_MAPPING] ([ROLE_ID],[ACT_ID]) VALUES($rid,'".str_pad($actId, 2, "0", STR_PAD_LEFT)."')");
+		if(!$data->error()){
+			return true;
+		}
+		return false;
+	}
+
+	public function removeActivity($actId) {
+		$data = DB::getInstance()->delete("ACT_DETAIL", array('ID', '=', $actId));
 		if(!$data->error()){
 			return true;
 		}

@@ -14,6 +14,7 @@ if(Input::get('id')){
 	//List
 	?>
 	<div class="page-header">
+  <button type="button" onclick="addActivity()" class="btn btn-success pull-right"><i class="fa fw fa-plus"></i> Add Activity</button>
 	<h1>Manage Activities <small><?php echo $xcpid; ?></small></h1>
 	</div>
 
