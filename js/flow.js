@@ -35,6 +35,27 @@ function updateStatusDesc(statusId, name, desc) {
 }
 
 
+function deleteStage(act, status) {
+	var modal = $('#deleteModal');
+	var butDelete = $('#dataModaldelButton');
+	var cancBut = $('#dataModaldelcancButton');
+	modal.find('.modal-title').text('Delete user ' + act + ":" + status + '?')
+	modal.modal();
+	butDelete.click(function() {
+            butDelete.button('loading');
+            cancBut.addClass('disabled');
+            $.ajax({
+                url: 'data/status.edit.php',
+                data: { id: act + "," + status,
+                        delete: true
+                      }
+            }).done(function( e ) {
+                modal.modal('hide');
+                location.reload();
+            }) //END AJAX
+        })
+}
+
 function updateRule(id, value, assign, action) {
 	console.log(id + ' ' + value + ' ' + assign + ' ' + action);
 	$.ajax({
@@ -288,4 +309,18 @@ function setUpdates() {
 $(function() {
 	setBase();
 	setUpdates();
+
+	$('#deleteModal').on('hidden.bs.modal', function () {
+		var modal = $('#deleteModal');
+		var butDelete = $('#dataModaldelButton');
+		var cancBut = $('#dataModaldelcancButton');
+	    cancBut.unbind(); //Remove on click listener
+	    butDelete.unbind(); //Remove on click listener
+	    modal.modal('hide');
+	    cancBut.button('reset');
+	    butDelete.button('reset');
+	    cancBut.removeClass('disabled');
+	    redrawTable();
+	});
+
 });

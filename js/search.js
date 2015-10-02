@@ -44,7 +44,7 @@ $(function() {
   $( '.results' ).click(function(event) {
     var res = event.currentTarget;
     var xcp = $(res).find( '.xcp_id' ).text()
-    window.open("http://xcp.dev/item.php?xcpid="+xcp, "_parent");
+    window.open("item.php?xcpid="+xcp, "_parent");
   });
 });
 

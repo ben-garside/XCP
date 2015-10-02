@@ -80,7 +80,7 @@ if(!$xcpid) {
 		  	</div>
 		  	<table id="audit_table" class="table">
 		  	<thead>
-		  		<tr><th>Id</th><th>Stage</th><th>Status</th><th>Created By</th><th>Assigned To</th><th>Info</th></tr>
+		  		<tr><th>Id</th><th>Stage</th><th>Status</th><th>Created</th><th>Assigned</th><th>Ended</th><th>Info</th></tr>
 		  	</thead>
 		  	<tbody>
 		  	</tbody>

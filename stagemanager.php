@@ -1,17 +1,18 @@
 <?php 
 require_once('php/templates/header.php');
 if(!$user->isLoggedIn()){
-    Redirect::to('login.php?nexturl=flow.php');
+    Redirect::to('login.php?nexturl=stagemanager.php');
 }
 ?>
 <?php 
 if($stage = Input::get('stage')){
-	if(!$user->hasPermission('admin')){
-	    Redirect::to('flow.php');
+	if(!$user->inRole('administrator')){
+	    Redirect::to('v.php');
 	}
 	?>
 	<div class="page-header">
-	<h1><span class="glyphicon glyphicon-random" aria-hidden="true"></span> Activity flow</h1>
+	  <a href="stagemanager.php" class="btn btn-success pull-right"><i class="fa fa-chevron-left"></i> Go Back</a>
+	<h1>Stage Manager</h1>
 	</div>
 	<?php
 	// Show info fopr selected stage
@@ -158,21 +159,21 @@ if($stage = Input::get('stage')){
 	// Show list of ACT and STAT
 	?>
 	<div class="page-header">
-	<h1><span class="glyphicon glyphicon-random" aria-hidden="true"></span> Activity flow <button type="button" onclick="addStage()" class="btn btn-primary"><i class="fa fw fa-plus"></i> Add stage</button></h1>
+	<h1>Stage Manager <button type="button" onclick="addStage()" class="btn btn-primary pull-right"><i class="fa fw fa-plus"></i> Add stage</button></h1>
 	</div>
 	<?php
 	$stageInfo = Activity::showStages();
 	foreach ($stageInfo as $key => $value) {
 		echo '<h3>' . $key . ' - ' . $value['INFO']->SHORT_NAME . ' <small>' . $value['INFO']->DESCRIPTION . '</small></h3>';
 		echo '<table class="table table-hover"><thead>';
-		if($user->hasPermission('admin')){
+		if($user->inRole('administrator')){
 				$editHead = '<th class="col-md-1"></th>';
 			}
 		echo '<tr><th class="col-md-1">Stage</th><th class="col-md-2">Name</th><th class="col-md-6">Description</th><th class="col-md-1"></th>' . $editHead . '</tr></thead>';
 		foreach ($value['STATUSES'] as $statusId => $statusVal) {
 			
-			if($user->hasPermission('admin')){
-				$edit = '<td class="col-md-1"><a href="?stage='. $statusVal->act . ',' . $statusVal->status .'">edit</a></td>';
+			if($user->inRole('administrator')){
+				$edit = '<td class="col-md-1"><div class="pull-right"><a href="?stage='. $statusVal->act . ',' . $statusVal->status .'" class="btn btn-success btn-sm" >Edit</a> <button class="btn btn-danger btn-sm" onclick="deleteStage(\''. $statusVal->act . '\',\'' . $statusVal->status .'\')">Delete</button></div></td>';
 			}
 			echo '<tr><td class="col-md-1">' . $statusVal->act . ':' . $statusVal->status . '</td><td class="col-md-2">' . $statusVal->name . '</td><td class="col-md-6">' . $statusVal->description . '</td><td class="col-md-1">' . $ruleAllow . '</td>' . $edit . '</tr>';
 			unset($ruleAllow);
@@ -300,7 +301,35 @@ if($stage = Input::get('stage')){
     </div>
   </div>
 </div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModal">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="deleteModal"></h4>
+      </div>
+      <div class="modal-body">
+      <p>
+      	Are you <em>really</em> sure you want to delete this stage and all of its rules?<br/>You will not be able to get it back!
+      </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-default" id="dataModaldelcancButton">Noooo... Close</button>
+        <button type="sumbit" 
+                class="btn btn-danger" 
+                data-loading-text="<i class='fa fa-spinner fa-pulse'></i> Updating"
+                data-error-text="Error" 
+                id="dataModaldelButton">
+                Yup, Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- END Modal -->
+
 <?php
 require_once('php/templates/footer.php');
 ?>
