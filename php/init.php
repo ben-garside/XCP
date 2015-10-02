@@ -18,11 +18,11 @@ $GLOBALS['config'] = array(
 		// 'password' => 'Password1',
 		// 'db' => 'UAT-XCP',
 
-		//TEST DATABASE - DEVELOPMENT
-		'host' => 'CHI-IND01',
-		'username' => 'XCP',
-		'password' => 'Password1',
-		'db' => 'XCP_TEST_DEV'
+		// //TEST DATABASE - DEVELOPMENT
+		// 'host' => 'CHI-IND01',
+		// 'username' => 'XCP',
+		// 'password' => 'Password1',
+		// 'db' => 'XCP_TEST_DEV'
 
 		// // TEST DATABASE - PRODUCTION
 		// 'host' => 'CHI-IND01',
@@ -40,8 +40,8 @@ $GLOBALS['config'] = array(
 		'token_name' => 'token',
 	),
 	'release' => array(
-		'version' => 'v1.2.1-beta.2',
-		'date' => '2015-09-17',
+		'version' => 'v1.2.2-beta.1',
+		'date' => '2015-10-02',
 
 	),
 );
