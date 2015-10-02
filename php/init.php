@@ -40,8 +40,8 @@ $GLOBALS['config'] = array(
 		'token_name' => 'token',
 	),
 	'release' => array(
-		'version' => 'v1.2.1',
-		'date' => '2015-09-24',
+		'version' => 'v1.2.2-beta.2',
+		'date' => '2015-10-02',
 
 	),
 );
