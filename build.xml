@@ -3,17 +3,20 @@
  
  <property name="buildDir"   value="${basedir}/build"/>
  
- <target name="devBuild" depends="copyBuild, copyInit" />
- <target name="build" depends="copyBuild, copyInit, printInfo"/>
+ <target name="devBuild" depends="copyBuild, copyInit, printInfoDev" />
+ <target name="build" depends="copyBuild, mkLink, copyInit, printInfo"/>
 
  <target name="clean" unless="clean.done" description="Cleanup build artifacts">
   <delete dir="${buildDir}"/>
   <property name="clean.done" value="true"/>
  </target>
 
+ <target name="mkLink">
+  <symlink link="${buildDir}/items" resource="E:\XCP\ADMIN\01-collatedFiles"/>
+ </target>
+
  <target name="prepare" unless="prepare.done" depends="clean" description="Prepare for build">
   <mkdir dir="${buildDir}/toSend"/>
-  <symlink link="${buildDir}/items" resource="E:\XCP\ADMIN\01-collatedFiles"/>
   <property name="prepare.done" value="true"/>
  </target>
 
@@ -44,4 +47,20 @@
   ?&gt;
   </echo>
 </target>
+
+<target name="printInfoDev">
+  <tstamp>
+    <format property="TODAY_GB" pattern="d-MMMM-yyyy" locale="en,GB"/>
+  </tstamp>
+  <echo file="${buildDir}/php/buildInfo.php" append="true">&lt;?php 
+  $GLOBALS['config']['build'] = array(
+  'commit' => 'dev',
+  'branch' => 'dev',
+  'build' => 'dev',
+  'buildUrl' => 'dev',
+  'date' => '${TODAY_GB}');
+  ?&gt;
+  </echo>
+</target>
+
 </project>
