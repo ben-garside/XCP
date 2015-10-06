@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="XCP" default="build">
+ 
+ <property name="buildDir"   value="${basedir}/build"/>
+ 
+ <target name="devBuild" depends="copyBuild, copyInit" />
+ <target name="build" depends="copyBuild, copyInit, printInfo"/>
+
+ <target name="clean" unless="clean.done" description="Cleanup build artifacts">
+  <delete dir="${buildDir}"/>
+  <property name="clean.done" value="true"/>
+ </target>
+
+ <target name="prepare" unless="prepare.done" depends="clean" description="Prepare for build">
+  <mkdir dir="${buildDir}/toSend"/>
+  <symlink link="${buildDir}/items" resource="E:\XCP\ADMIN\01-collatedFiles"/>
+  <property name="prepare.done" value="true"/>
+ </target>
+
+ <target name="copyBuild" depends="prepare" description="Copy source bins to build">
+  <copy todir="${buildDir}">
+   <fileset dir="${basedir}/src">
+     <exclude name="**/bulid/**"/>
+     <exclude name="**/php/dbinit.*.php"/>
+   </fileset> 
+  </copy>
+ </target>
+
+ <target name="copyInit" description="copy init file for buildType">
+    <copy file="${basedir}/src/php/dbinit.${buildType}.php" tofile="${buildDir}/php/dbinit.php"/>
+ </target>
+
+<target name="printInfo">
+  <tstamp>
+    <format property="TODAY_GB" pattern="d-MMMM-yyyy" locale="en,GB"/>
+  </tstamp>
+  <echo file="${buildDir}/php/buildInfo.php" append="true">&lt;?php 
+  $GLOBALS['config']['build'] = array(
+  'commit' => '${git}',
+  'branch' => '${git_branch}',
+  'build' => '${build}',
+  'buildUrl' => '${buildUrl}',
+  'date' => '${TODAY_GB}');
+  ?&gt;
+  </echo>
+</target>
+</project>

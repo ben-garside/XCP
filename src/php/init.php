@@ -4,33 +4,6 @@ session_start();
 date_default_timezone_set('Europe/London');
 
 $GLOBALS['config'] = array(
-	'mysql' => array(
-	
-		// // UAT DATABASE - DEVELOPMENT	
-		// 'host' => '10.103.109.84\cloud,1500',
-		// 'username' => 'WSCRAPE_user',
-		// 'password' => 'Password1',
-		// 'db' => 'UAT-WSCRAPE',
-
-		// // UAT DATABASE - PRODUCTION
-		// 'host' => '10.103.109.84\cloud,1500',
-		// 'username' => 'XCP_user',
-		// 'password' => 'Password1',
-		// 'db' => 'UAT-XCP',
-
-		//TEST DATABASE - DEVELOPMENT
-		'host' => 'CHI-IND01',
-		'username' => 'XCP',
-		'password' => 'Password1',
-		'db' => 'XCP_TEST_DEV'
-
-		// // TEST DATABASE - PRODUCTION
-		// 'host' => 'CHI-IND01',
-		// 'username' => 'XCP',
-		// 'password' => 'Password1',
-		// 'db' => 'XCP_TEST_PRD'
-
-	),
 	'remember' => array(
 		'cookie_name' => 'hash',
 		'cookie_expiry' => 604800,
@@ -47,6 +20,10 @@ $GLOBALS['config'] = array(
 );
 // Include Composer files..
 require __DIR__ . '/../vendor/autoload.php';
+
+// Require database settings
+require "dbinit.php";
+require "buildInfo.php";
 
 // Include all classes
 spl_autoload_register(function ($class) {

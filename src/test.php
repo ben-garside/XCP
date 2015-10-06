@@ -5,7 +5,14 @@ $test = new Activity($xcpid);
 
 echo "<pre>USERID: " . $user->data()->id . "<br>";
 
-print_r(User::showRoles());
+	$activityFrom 	= '10';
+	$statusFrom		= '19';
+
+	$activityTo 	= '10';	
+	$statusTo		= '20';
+
+
+print_r(Activity::showAtStage($activityFrom,$statusFrom));
 
 //print_r(Activity::showFieldData('TAT'));
 
@@ -19,4 +26,4 @@ echo '</pre><br>';
 
 
 <?php
-require_once 'php/templates/footer.php';
+//require_once 'php/templates/footer.php';

@@ -402,7 +402,7 @@ class Activity {
 	public static function showAtStage($act, $status){
 		$sql = "SELECT *
 				FROM mainData
-				OUTER APPLY (SELECT TOP 1 * FROM ACT_AUDIT WHERE XCPID = mainData.XCP_ID order by id desc) AUDIT
+				OUTER APPLY (SELECT TOP 1 * FROM ACT_AUDIT_2 WHERE XCPID = mainData.XCP_ID order by id desc) AUDIT
 				LEFT JOIN USERS ON USERS.id = AUDIT.startedBy
 				WHERE AUDIT.activity = $act and STATUS = $status AND AUDIT.XCPID IS NOT NULL";
 
