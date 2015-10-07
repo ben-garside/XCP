@@ -32,13 +32,13 @@ $systemUser		= -1;
 if ($runType =='dev'){
 
 	//set email settings for main send 
-	$subMain = "PRE_SEND::" . $globalSubject;
+	$subMain = "UAT::PRE_SEND::" . $globalSubject;
 	$bodMain = $globalBody;
 	$recMain = array(	"CC" => "ben.garside@bsigroup.com",
 						"TO" => "content.operations@bsigroup.com");
 
 	//Email settings for Pipeline 8 send 
-	$subPl8 = "PRE_SEND(PL8)::" . $globalSubject;
+	$subPl8 = "UAT::PRE_SEND(PL8)::" . $globalSubject;
 	$bodPl8 = $globalBody;
 	$recPl8 = array(	"TO" => "content.operations@bsigroup.com",
 						"CC" => "ben.garside@bsigroup.com");
@@ -62,13 +62,13 @@ if ($runType =='dev'){
 } elseif ($runType == 'prd') {
 
 	//set email settings for main send 
-	$subMain = $globalSubject;
+	$subMain = "UAT::" . $globalSubject;
 	$bodMain = $globalBody;
 	$recMain = array(	"TO" => "content.operations@bsigroup.com",
 						"CC" => "ben.garside@bsigroup.com");
 	
 	//set email settings for Pipeline 8 send 
-	$subPl8 = "(PL8)" . $globalSubject;
+	$subPl8 = "UAT::(PL8)" . $globalSubject;
 	$bodPl8 = $globalBody;
 	$recPl8 = array(	"TO" => "content.operations@bsigroup.com",
 						"CC" => "ben.garside@bsigroup.com");
