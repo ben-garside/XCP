@@ -77,5 +77,3 @@ $GLOBALS['config']['sendItems']['prd'] = array(
 
 	);
 ?>
-
-

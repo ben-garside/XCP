@@ -43,9 +43,7 @@
   'branch' => '${git_branch}',
   'build' => '${build}',
   'buildUrl' => '${buildUrl}',
-  'date' => '${TODAY_GB}');
-  ?&gt;
-  </echo>
+  'date' => '${TODAY_GB}');?&gt;</echo>
 </target>
 
 <target name="printInfoDev">
@@ -58,9 +56,7 @@
   'branch' => 'dev',
   'build' => 'dev',
   'buildUrl' => 'dev',
-  'date' => '${TODAY_GB}');
-  ?&gt;
-  </echo>
+  'date' => '${TODAY_GB}');?&gt;</echo>
 </target>
 
 </project>

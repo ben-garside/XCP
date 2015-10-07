@@ -221,13 +221,13 @@ class Activity {
 		$user = new User();
 		$date = date("Y/m/d H:i:s"). substr((string)microtime(), 1, 3);
 		$sql = 		"UPDATE [dbo].[ACT_AUDIT_2]
-					SET allocatedTo = " . $user->data()->id . ", allocatedBy = " . $user->data()->id . ", allocatedOn = " . $date . "
+					SET allocatedTo = " . $user->data()->id . ", allocatedBy = " . $user->data()->id . ", allocatedOn = '" . $date . "'
 					WHERE ID = (SELECT TOP 1 AUDIT.ID
 					FROM mainData
 					OUTER APPLY (SELECT TOP 1 * FROM ACT_AUDIT_2 WHERE XCPID = mainData.XCP_ID order by id desc) AUDIT
 					WHERE AUDIT.activity = " . $this->getCurrentActivity() . " AND AUDIT.XCPID IS NOT NULL AND XCP_ID = '$this->xcpid')";
 		$data = $this->_db->query($sql);
-		if($data->count()){
+		if(!$data->error()){
 			return 'OK';
 		} else {
 			return 'ERROR';

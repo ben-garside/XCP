@@ -209,7 +209,7 @@ function claim(xcpid) {
                 $('#row_' + xcpid).parents('tr').animate({
                     'backgroundColor': '#E28686'
                 })
-                alert(e);
+                console.log(e);
                 setTimeout(function () {
                     $('#row_' + xcpid).parents('tr').animate({'backgroundColor': ''});
                 }, 1000);
