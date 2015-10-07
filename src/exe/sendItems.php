@@ -24,71 +24,45 @@ $itemDir = '../items';
 $date = date("Y-m-d");
 
 //globals
-$globalBody 	= "<p>Dear Innodata,</p><p>This is to inform you that a new batch has been transferred to Innodata\'s FTP site, for review for producing agreed XML outputs. Attached is a transmission sheet detailing each Material (identified by UPI) in the batch.</p><p><strong>Please could you confirm receipt of these files and get back on an estimated turnaround time (TAT) and cost. Following this we will confirm whether work should proceed.</strong></p><p><u>Notes:</u></p><p>Directory path: /TO INNO/". $date . "</p><ul><li>Materials are batched into zip files according to a single Conversion Pipeline (indicated in the Batch ID and the column Conversion_Pipeline in the transmission sheet)</li><li>Each Material in the zip file needs to be processed through that Conversion Pipeline </li><li>Details in the transmission sheet confirm the file types we have provided for each Material (see columns Source_File_Type) and the required XML output (based on Schema, see column Output_File_Type)</li></ul><p>Many thanks</p>";
-$globalSubject 	= "Innodata_Batch_Alert_" . $date;
-$recNote 		= array("TO" => "ben.garside@bsigroup.com");
-$systemUser		= -1;
+$recNote 		= Config::get('config/sendItems/global/recNote');
+$systemUser		= Config::get('config/sendItems/global/systemUser');
+
 //soft-hard
 if ($runType =='dev'){
 
-	//set email settings for main send 
-	$subMain = "UAT::PRE_SEND::" . $globalSubject;
-	$bodMain = $globalBody;
-	$recMain = array(	"CC" => "ben.garside@bsigroup.com",
-						"TO" => "content.operations@bsigroup.com");
-
-	//Email settings for Pipeline 8 send 
-	$subPl8 = "UAT::PRE_SEND(PL8)::" . $globalSubject;
-	$bodPl8 = $globalBody;
-	$recPl8 = array(	"TO" => "content.operations@bsigroup.com",
-						"CC" => "ben.garside@bsigroup.com");
-
-	// FTP settings
-	$ftp_server = "ftp.hugatramp.com"; 
-	$ftp_user_name = "xcptest@hugatramp.com"; 
-	$ftp_user_pass = "Password1";
-
-	// What items to check for and where to move them
-	$activityFrom 	= '10';
-	$statusFrom		= '19';
-
-	$activityTo 	= '10';	
-	$statusTo		= '20';
-
-	$ItemMoveMsg	= "Pre-send done, moving to next stage";
+	$subMain 		= Config::get('config/sendItems/dev/subMain') . $date;
+	$bodMain 		= Config::get('config/sendItems/dev/bodMain');
+	$recMain 		= Config::get('config/sendItems/dev/recMain');
+	$subPl8 		= Config::get('config/sendItems/dev/subPl8') . $date;
+	$bodPl8 		= Config::get('config/sendItems/dev/bodPl8');
+	$recPl8 		= Config::get('config/sendItems/dev/recPl8');
+	$ftp_server   	= Config::get('config/sendItems/dev/ftp_server'); 
+	$ftp_user_name 	= Config::get('config/sendItems/dev/ftp_user_name'); 
+	$ftp_user_pass 	= Config::get('config/sendItems/dev/ftp_user_pass');
+	$activityFrom 	= Config::get('config/sendItems/dev/activityFrom');
+	$statusFrom		= Config::get('config/sendItems/dev/statusFrom');
+	$activityTo 	= Config::get('config/sendItems/dev/activityTo');	
+	$statusTo		= Config::get('config/sendItems/dev/statusTo');
+	$ItemMoveMsg	= Config::get('config/sendItems/dev/ItemMoveMsg');
 
 	echo "\nRunning as: dev\n";
 
 } elseif ($runType == 'prd') {
 
-	//set email settings for main send 
-	$subMain = "UAT::" . $globalSubject;
-	$bodMain = $globalBody;
-	$recMain = array(	"TO" => "content.operations@bsigroup.com",
-						"CC" => "ben.garside@bsigroup.com");
-	
-	//set email settings for Pipeline 8 send 
-	$subPl8 = "UAT::(PL8)" . $globalSubject;
-	$bodPl8 = $globalBody;
-	$recPl8 = array(	"TO" => "content.operations@bsigroup.com",
-						"CC" => "ben.garside@bsigroup.com");
-
-	// Set FTP settings
-	// $ftp_server = "203.55.173.10"; 
-	// $ftp_user_name = "FTP-BSI"; 
-	// $ftp_user_pass = "PL4789mn";
-	$ftp_server = "ftp.hugatramp.com"; 
-	$ftp_user_name = "xcptest1@hugatramp.com"; 
-	$ftp_user_pass = "Password1";
-
-	// What items to check for and where to move them
-	$activityFrom 	= '10';
-	$statusFrom		= '20';	
-
-	$activityTo 	= '20';
-	$statusTo		= '00';
-
-	$ItemMoveMsg	= "Automatic send to INNODATA";
+	$subMain 		= Config::get('config/sendItems/prd/subMain') . $date;
+	$bodMain 		= Config::get('config/sendItems/prd/bodMain');
+	$recMain 		= Config::get('config/sendItems/prd/recMain');
+	$subPl8 		= Config::get('config/sendItems/prd/subPl8') . $date;
+	$bodPl8 		= Config::get('config/sendItems/prd/bodPl8');
+	$recPl8 		= Config::get('config/sendItems/prd/recPl8');
+	$ftp_server   	= Config::get('config/sendItems/prd/ftp_server'); 
+	$ftp_user_name 	= Config::get('config/sendItems/prd/ftp_user_name'); 
+	$ftp_user_pass 	= Config::get('config/sendItems/prd/ftp_user_pass');
+	$activityFrom 	= Config::get('config/sendItems/prd/activityFrom');
+	$statusFrom		= Config::get('config/sendItems/prd/statusFrom');
+	$activityTo 	= Config::get('config/sendItems/prd/activityTo');	
+	$statusTo		= Config::get('config/sendItems/prd/statusTo');
+	$ItemMoveMsg	= Config::get('config/sendItems/prd/ItemMoveMsg');
 
 	echo "\nRunning as: prd\n";
 
