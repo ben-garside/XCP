@@ -64,21 +64,14 @@ if ($runType =='dev'){
 	//set email settings for main send 
 	$subMain = $globalSubject;
 	$bodMain = $globalBody;
-	$recMain = array(	"TO" 	=> 	"APradeep@innodata.com",
-						"TO" 	=> 	"LGoboy@INNODATA.COM",
-						"CC" 	=> 	"content.operations@bsigroup.com",
-						"BCC" 	=> 	"ben.garside@bsigroup.com");
+	$recMain = array(	"TO" => "content.operations@bsigroup.com",
+						"CC" => "ben.garside@bsigroup.com");
 	
 	//set email settings for Pipeline 8 send 
 	$subPl8 = "(PL8)" . $globalSubject;
 	$bodPl8 = $globalBody;
-	$recPl8 = array(	"TO" 	=> 	"JNemis@INNODATA.COM",
-						"TO" 	=> 	"LGoboy@INNODATA.COM",
-						"TO" 	=> 	"gcmontesclaros@INNODATA.COM",
-						"TO" 	=> 	"MJaucian@innodata.com",
-						"TO" 	=> 	"ARQuismundo@innodata.com",
-						"CC" 	=> 	"content.operations@bsigroup.com",
-						"BCC" 	=> 	"ben.garside@bsigroup.com");
+	$recPl8 = array(	"TO" => "content.operations@bsigroup.com",
+						"CC" => "ben.garside@bsigroup.com");
 
 	// Set FTP settings
 	// $ftp_server = "203.55.173.10"; 
