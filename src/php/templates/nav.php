@@ -49,6 +49,7 @@
               <li <?php echoActiveClassIfRequestMatches("activitymanager"); ?>><a href="activitymanager.php" ><i class="fa fa-fw fa-bolt"></i></i> Activity Manager</a></li>
               <li class="divider"></li>
               <li><a href="addexclution.php" ><i class="fa fa-times"></i> Exclude Content</a></li>
+              <li><a href="addinclution.php" ><i class="fa fa-plus"></i> Include Content</a></li>
               
             </ul>
         </li>

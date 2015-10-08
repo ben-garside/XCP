@@ -63,16 +63,73 @@ class XCP {
 		return false;
 	}
 
+	/**
+	 * Check to see if provided Xcpid is already in use, 
+	 * return true if its unique and false if it exists already
+	 */
+	public function checkXcpid($xcpid = null) {
+		if($xcpid) {
+			$db = DB::getInstance();
+			$data = $db->get('FEED_DATA', array('XCP_ID','=',$xcpid));
+			if($data->count()) {
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public function generateXcpid() {
+		return 'XCP' . str_pad(rand(0,9999999),7,0, STR_PAD_LEFT);
+	}
+
+	public function makeXcpid() {
+		$test = false;
+		while ($test == false) {
+			$xcpid = Xcp::generateXcpid();
+			if(Xcp::checkXcpid($xcpid)){
+				$test = true;
+			}
+		}
+		return $xcpid;
+	}
+
+	/**
+	 * Exclude content by asdding its details to the Exclusion table
+	 */
 	public function exclude($upi,$feed,$user,$comment = null) {
 		$db = DB::getInstance();
+		$date = date("Y/m/d H:i:s"). substr((string)microtime(), 1, 3);
 		$data = array(	"UPI" => $upi,
 						"FEED_ID" => $feed,
-						"DT_ADDED" => date(),
+						"DT_ADDED" => $date,
 						"USER_ID" => $user,
 						"COMMENT" => $comment
 					);
 		if(!$db->insert("FEED_EXCLUTION",$data)) {
 			throw new Exception("SQL ERROR");
+		}
+	}
+
+	public function includeUpi($upi,$feed,$user,$comment = null) {
+		$db = DB::getInstance();
+		$date = date("Y/m/d H:i:s"). substr((string)microtime(), 1, 3);
+		
+
+		$xcp = $db->query("SELECT XCP_ID FROM FEED_DATA WHERE material_id = '$upi' AND feed_id = '$feed'");
+		if($xcp->first()->XCP_ID) {
+			throw new Exception('Item is already in feed: ' . $xcp->first()->XCP_ID);
+		}
+		$newXcp = Xcp::makeXcpid();
+		$data = array(	"XCP_ID" => $newXcp,
+						"feed_id" => $feed,
+						"material_id" => $upi,
+						"date_added" => $date
+					);
+		if(!$db->insert("FEED_DATA",$data)) {
+			throw new Exception("SQL ERROR");
+		} else {
+			return $newXcp;
 		}
 	}
 
