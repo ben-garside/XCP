@@ -763,11 +763,11 @@ class Activity {
 		$date = date("Y/m/d H:i:s"). substr((string)microtime(), 1, 3);
 		switch ($method) {
 			case 'update':
-				$sql = "UPDATE $source SET [data_value] = '$value', edited_on = $date, edited_by = $user WHERE xcpid = '$xcpid' and data_key = '$key'";
+				$sql = "UPDATE $source SET [data_value] = '$value', edited_on = '$date', edited_by = $user WHERE xcpid = '$xcpid' and data_key = '$key'";
 				break;
 			case 'insert':
 				$sql = "INSERT INTO [dbo].[ITEM_DATA] ([xcpid],[data_key],[data_value],[data_type],[created_on],[created_by],[edited_on],[edited_by])
-						VALUES ('$xcpid','$key','$value',$dataType,$date,$user,NULL,NULL)";
+						VALUES ('$xcpid','$key','$value',NULL,'$date','$user',NULL,NULL)";
 				break;
 			case 'delete':
 				$sql = "DELETE FROM $source WHERE xcpid = '$xcpid' and data_key = '$key'";
@@ -776,7 +776,6 @@ class Activity {
 				return array('status' => '350', 'message' => 'Unknown database method: ' . $method);
 				break;
 		}
-
 		$db->query($sql);
 		if($db->error()){
 			return array('status' => '300', 'message' => $db->errorInfo());

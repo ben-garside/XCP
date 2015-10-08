@@ -129,6 +129,8 @@ class XCP {
 		if(!$db->insert("FEED_DATA",$data)) {
 			throw new Exception("SQL ERROR");
 		} else {
+			Activity::changeItemData($newXcp, 'manuallyAddedBy', $user, 'insert', 'ITEM_DATA', 1, NULL);
+			Activity::changeItemData($newXcp, 'manuallyAddedOn', $date, 'insert', 'ITEM_DATA', 1, NULL);
 			return $newXcp;
 		}
 	}
