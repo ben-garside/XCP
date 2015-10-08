@@ -766,7 +766,7 @@ class Activity {
 				$sql = "UPDATE $source SET [data_value] = '$value', edited_on = '$date', edited_by = $user WHERE xcpid = '$xcpid' and data_key = '$key'";
 				break;
 			case 'insert':
-				$sql = "INSERT INTO [dbo].[ITEM_DATA] ([xcpid],[data_key],[data_value],[data_type],[created_on],[created_by],[edited_on],[edited_by])
+				$sql = "INSERT INTO $source ([xcpid],[data_key],[data_value],[data_type],[created_on],[created_by],[edited_on],[edited_by])
 						VALUES ('$xcpid','$key','$value',NULL,'$date','$user',NULL,NULL)";
 				break;
 			case 'delete':
