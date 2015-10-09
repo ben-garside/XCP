@@ -38,7 +38,29 @@ if(!$xcpid) {
 		  	</table>
 		</div>
 	</div>
-	<div class="col-md-8">
+
+	<div class="col-md-4">
+		<div class="panel panel-default">
+		  	<div class="panel-heading">
+		    	<h3 class="panel-title">Batch Data</h3>
+		  	</div>
+		  	<table class="table">
+		  		<?php
+		  			$data = Activity::showItemData(Activity::getBatchId($xcpid), 'BATCH_DATA');
+		  			if(!empty($data)){
+			  			foreach ($data as $key => $value) {
+			  				echo"<tr><td><strong>" . $key ."<strong></td><td>". $value . "</td></tr>";
+			  			}		  				
+		  			} else {
+							echo"<tr><td><em>No data found</em></td><td></td></tr>";
+		  			}
+
+		  		?>
+		  	</table>
+		</div>
+	</div>
+
+	<div class="col-md-4">
 		<div class="panel panel-default">
 		  	<div class="panel-heading">
 		    	<h3 class="panel-title">Collated Files <small><?php echo $item->getCollationData()['collationDate'] ;?></small></h3>
