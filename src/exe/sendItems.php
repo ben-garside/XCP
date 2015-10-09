@@ -224,10 +224,12 @@ if(count($items) > 0) {
 		fwrite($manifest, implode(",", $details) . "\n");
 
 		// Move to next activity
-		echo "    Updating item in XCP: " . $item->XCPID . "\n";
-		$item = new Activity($item->XCPID);
+		echo "    Updating item in XCP: " . $item->XCPID . ". Moving to: " . $activityTo . ":" . $statusTo ."\n";
+		$xcpId = $item->XCPID;
+		$item = new Activity($xcpId);
 		$item->moveToActivity($activityTo, $statusTo, $systemUser, false, $ItemMoveMsg);
-
+		// add batchID to ITEM_DATA
+		Activity::changeItemData($xcpId, 'Innodata_Batch_ID', $details[1], 'insert', 'ITEM_DATA', 1, NULL);
 
 
 	} //End for each
