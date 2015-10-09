@@ -22,8 +22,20 @@ $db->query('SELECT * FROM [dbo].[ACTION_FIELDS] WHERE action_id = ' . $action_id
 $actionFields = $db->results();
 
 foreach ($actionFields as $fieldInfo => $value) {
+
+	if($value->source_table == 'BATCH_DATA'){
+		if(!$dataId = Activity::getBatchId($xcpid)){
+			$status[$id] = array('status' => '450', 'message' => 'Item is not in a batch');
+		};
+	} else {
+		$dataId  = $xcpid;
+	}
+
+	#print_r($value);
+	#print_r($dataId);
 	$text .= "";
-	$itemInfo = (Activity::showItemData($xcpid, $value->source_table));
+	$itemInfo = (Activity::showItemData($dataId, $value->source_table));
+	#print_r($itemInfo);
 	$text .= '<div class="form-group">';
 	$text .= '<label for="'.$value->field_name.'" class="control-label">';
 	$text .= $value->field_name_display;
@@ -38,7 +50,7 @@ foreach ($actionFields as $fieldInfo => $value) {
 				$text .= '<div class="input-group">';
 			}
 			if($value->field_prefix) {
-				$text .= '<span class="input-group-addon">' 	. $value->field_prefix . '</span>';
+				$text .= '<span class="input-group-addon">'. $value->field_prefix .'</span>';
 			}
 			$text .= '<input class="form-control" data-source="'. $value->source_table  .'" type="'.$dataTypes[$value->data_type].'" name="'.$value->field_name.'" id="'.$value->field_name.'" ';
 			if($value->source_prefill == true && $itemInfo[$value->field_name] != "") {
@@ -47,7 +59,7 @@ foreach ($actionFields as $fieldInfo => $value) {
 				$text .= ' placeholder="'.$value->data_placeholder.'"';
 			}
 			if($value->data_required) {
-				$text .= 'required ';
+				$text .= ' required ';
 			}
 			$text .= '>';
 			if($value->field_suffix) {

@@ -719,7 +719,6 @@ class Activity {
 	}
 
 	public function addActivity($data, $roles) {
-		echo 'hello';
 			$db = DB::getInstance();
 			if(!$db->insert('ACT_DETAIL', $data)) {
 				throw new Exception("There was an issue creating the activity.");
@@ -758,7 +757,18 @@ class Activity {
 		return false;
 	}
 
+	public function getBatchId($xcpid) {
+		$db = DB::getInstance();
+		$data = $db->query("SELECT data_value FROM ITEM_DATA WHERE data_key = 'Innodata_Batch_ID' AND xcpid = '$xcpid'");
+		if($data->count()){
+			return $data->first()->data_value;
+		} else {
+			return false;
+		}
+	}
+
 	public static function changeItemData($xcpid, $key, $value, $method, $source, $user, $dataType = null) {
+
 		$db = DB::getInstance();
 		$date = date("Y/m/d H:i:s"). substr((string)microtime(), 1, 3);
 		switch ($method) {
