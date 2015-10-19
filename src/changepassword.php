@@ -7,7 +7,7 @@ require_once 'php/templates/header.php';
 <?php
 
 if(!$user->isLoggedIn()) {
-	Redirect::to('index.php');
+    ?><script>window.location.href = 'index.php';</script><?php
 }
 
 if(Input::exists()) {
@@ -42,7 +42,7 @@ if(Input::exists()) {
 				));
 
 				Session::flash('home-success', 'Your password has been updated! You will need to login again.');
-				Redirect::to('logout.php');
+				?><script>window.location.href = 'logout.php';</script><?php
 			}
 
 		} else {

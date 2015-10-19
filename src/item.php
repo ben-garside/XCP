@@ -2,14 +2,14 @@
 require_once 'php/templates/header.php';
 $xcpid = Input::get('xcpid');
 if(!$xcpid) {
-	Redirect::to('index.php');
+	?><script>window.location.href = 'index.php';</script><?php
 } else {
 	//Check to see if you can load the item
 	try {
 		$item = new XCP($xcpid);
 	} catch (Exception $e) {
 		Session::flash('home-danger',$e->getMessage());
-		Redirect::to('index.php');
+		?><script>window.location.href = 'index.php';</script><?php
 	}	
 }
 ?>

@@ -55,7 +55,7 @@ if(Input::exists()) {
 				));
 
 				Session::flash('home-success','Thanks ' . Input::get('name_first') . ', you have registered!');
-				Redirect::to('index.php');
+				?><script>window.location.href = 'index.php';</script><?php
 
 			} catch(Exception $e) {
 				die($e->getMessage());
