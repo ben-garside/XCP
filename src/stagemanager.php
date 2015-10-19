@@ -1,13 +1,13 @@
 <?php 
 require_once('php/templates/header.php');
 if(!$user->isLoggedIn()){
-    Redirect::to('login.php?nexturl=stagemanager.php');
+    ?><script>window.location.href = 'login.php?nexturl=stagemanager.php';</script><?php
 }
 ?>
 <?php 
 if($stage = Input::get('stage')){
 	if(!$user->inRole('administrator')){
-	    Redirect::to('v.php');
+	    ?><script>window.location.href = 'v.php';</script><?php
 	}
 	?>
 	<div class="page-header">

@@ -50,7 +50,7 @@ DECLARE @targetString varchar(200)
 DECLARE @schema varchar(200)
 DECLARE @count varchar(200)
 
-SET @exclude = 'sysdiagrams,'
+SET @exclude = 'sysdiagrams,ACT_AUDIT_2,ACT_ROLE_MAPPING,ROLE_USER_MAPPING,ROLES,USERS'
 SET @sourceTable = '[UAT-XCP]'
 SET @targetTable = '[UAT-WSCRAPE]'
 SET @schema = 'dbo'

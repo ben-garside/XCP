@@ -1,7 +1,7 @@
 <?php
 require_once 'php/templates/header.php';
 if (!$user->isLoggedIn()) {
-	Redirect::to('login.php?nexturl=activity.php');
+  ?><script>window.location.href = 'login.php?nexturl=activity.php';</script><?php
 }
 if (Session::exists('home-success')) {
 	?>
@@ -23,7 +23,7 @@ if($test = Activity::initRunning()) {
  $datetime2 = new DateTime('now');
  $interval = $datetime1->diff($datetime2);
  Session::flash('home-danger','The init process is still running, it has been running since ' .$test . ' (That\'s: ' . $interval->format('%R%a days, %H hours, %i minutes') . '.)');
- Redirect::to('index.php');
+ ?><script>window.location.href = 'index.php';</script><?php
 }
 ?>
 <div class="page-header">
