@@ -10,7 +10,7 @@ $db = DB::getInstance();
 $user = new User();
 if(!$user->isLoggedIn()){
 	Session::flash('login-error','You must be logged in to view this page!');
-    Redirect::to('login.php?nexturl=index.php');
+    ?><script>window.location.href = 'login.php?nexturl=index.php';</script><?php
 }
 
 $sql = "SELECT [id],[username] FROM [USERS]";

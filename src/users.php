@@ -2,7 +2,7 @@
 require_once('php/templates/header.php');
 
 if(!$user->isLoggedIn() || !$user->inRole('SystemAdministrator')){
-    Redirect::to('index.php');
+    ?><script>window.location.href = 'index.php';</script><?php
 }
 ?>
 <div class="page-header">

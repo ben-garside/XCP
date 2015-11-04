@@ -1,12 +1,10 @@
 <?php 
 require_once('php/templates/header.php');
 if(!$user->isLoggedIn()){
-    Redirect::to('login.php?nexturl=index.php');
+    ?><script>window.location.href = 'login.php?nexturl=index.php';</script><?php
 }
 if($term = Input::get('term')){
-	if(!$user->hasPermission('admin')){
-	    Redirect::to('index.php');
-	}
+
 	// Show info fopr selected action
 	$search = new Search();
 	$results = $search->items($term);

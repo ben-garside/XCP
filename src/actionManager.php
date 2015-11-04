@@ -1,11 +1,11 @@
 <?php 
 require_once('php/templates/header.php');
 if(!$user->isLoggedIn()){
-    Redirect::to('login.php?nexturl=actionmanager.php');
+	?><script>window.location.href = 'login.php?nexturl=actionmanager.php';</script><?php
 }
 if($id = Input::get('id')){
 	if(!$user->inRole('administrator')){
-	    Redirect::to('actionmanager.php');
+		?><script>window.location.href = 'actionmanager.php';</script><?php
 	}
 	// Show info fopr selected action
 	?>

@@ -30,7 +30,7 @@ switch ($type) {
 		break;
 	
 	default:
-		$sql = "SELECT DISTINCT mainData.*, USERS.*, ACT_STATUS_2.ACT + ':' +  ACT_STATUS_2.STATUS as stage, ACT_STATUS_2.name as statusName, ACT_STATUS_2.DESCRIPTION statusDescription, AUDIT.*
+		$sql = "SELECT DISTINCT mainData.*, XCPID, USERS.id, USERS.name_first, USERS.name_last, USERS.username, ACT_STATUS_2.ACT + ':' +  ACT_STATUS_2.STATUS as stage, ACT_STATUS_2.DESCRIPTION statusDescription, ACT_STATUS_2.name as statusName, AUDIT.startedOn DATE, AUDIT.activity, AUDIT.STATUS
 				FROM mainData
 				OUTER APPLY (SELECT TOP 1 * FROM ACT_AUDIT_2 WHERE XCPID = mainData.XCP_ID order by id desc) AUDIT
 				LEFT JOIN USERS ON USERS.id = AUDIT.startedBy

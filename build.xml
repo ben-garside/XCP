@@ -37,30 +37,14 @@
   <tstamp>
     <format property="TODAY_GB" pattern="d-MMMM-yyyy" locale="en,GB"/>
   </tstamp>
-  <echo file="${buildDir}/php/buildInfo.php" append="true">&lt;?php 
-  $GLOBALS['config']['build'] = array(
-  'commit' => '${git}',
-  'branch' => '${git_branch}',
-  'build' => '${build}',
-  'buildUrl' => '${buildUrl}',
-  'date' => '${TODAY_GB}');
-  ?&gt;
-  </echo>
+  <echo file="${buildDir}/php/buildInfo.php" append="true">&lt;?php $GLOBALS['config']['build'] = array('commit' => '${git}','branch' => '${git_branch}','build' => '${build}','buildUrl' => '${buildUrl}','date' => '${TODAY_GB}'); ?&gt;</echo>
 </target>
 
 <target name="printInfoDev">
   <tstamp>
     <format property="TODAY_GB" pattern="d-MMMM-yyyy" locale="en,GB"/>
   </tstamp>
-  <echo file="${buildDir}/php/buildInfo.php" append="true">&lt;?php 
-  $GLOBALS['config']['build'] = array(
-  'commit' => 'dev',
-  'branch' => 'dev',
-  'build' => 'dev',
-  'buildUrl' => 'dev',
-  'date' => '${TODAY_GB}');
-  ?&gt;
-  </echo>
+  <echo file="${buildDir}/php/buildInfo.php" append="true">&lt;?php $GLOBALS['config']['build'] = array('commit' => 'dev','branch' => 'dev','build' => 'dev','buildUrl' => 'dev','date' => '${TODAY_GB}'); ?&gt;</echo>
 </target>
 
 </project>
