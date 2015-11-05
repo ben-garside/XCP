@@ -65,7 +65,6 @@ $results = $data->results();
 						  <li class="dropdown-header">Select next stage</li><div style="margin-left: 1.5em;" class="nextContent"><i class="fa fa-spinner fa-pulse"></i></div>';
 				$form .= '<li role="separator" class="divider"></li>';
 				$form .= '<li><a href="javascript:void(0)" onclick="unassign(\''.$result->XCPID.'\')"><i class="fa fa-undo"></i> Unclaim item</a></li>';
-				$form .= '<li><a href="javascript:void(0)" data-toggle="modal" data-target="#updateData" data-xcpid="'.$result->XCPID.'"><i class="fa fa-wrench"></i> Update Data</a></li>';
 				$form .='</div>';
 				break;
 			default:
