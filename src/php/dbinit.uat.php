@@ -32,8 +32,8 @@ $GLOBALS['config']['sendItems']['dev'] = array(
 
 		// FTP settings
 		'ftp_server' 	=> "ftp.hugatramp.com",
-		'ftp_user_name' => "xcptest@hugatramp.com",
-		'ftp_user_pass' => "Password1",
+		'ftp_user_name' => "xcp_uat_presend@hugatramp.com",
+		'ftp_user_pass' => "9f4gp8quy0",
 
 		// What items to check for and where to move them
 		'activityFrom' 	=> '10',
@@ -62,8 +62,8 @@ $GLOBALS['config']['sendItems']['prd'] = array(
 
 		// FTP settings
 		'ftp_server' 	=> "ftp.hugatramp.com",
-		'ftp_user_name' => "xcptest1@hugatramp.com",
-		'ftp_user_pass' => "Password1",
+		'ftp_user_name' => "xcp_uat_final@hugatramp.com",
+		'ftp_user_pass' => "yqasggery6",
 
 		// What items to check for and where to move them
 		'activityFrom' 	=> '10',

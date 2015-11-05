@@ -719,7 +719,6 @@ class Activity {
 	}
 
 	public function addActivity($data, $roles) {
-		echo 'hello';
 			$db = DB::getInstance();
 			if(!$db->insert('ACT_DETAIL', $data)) {
 				throw new Exception("There was an issue creating the activity.");
@@ -758,16 +757,27 @@ class Activity {
 		return false;
 	}
 
+	public function getBatchId($xcpid) {
+		$db = DB::getInstance();
+		$data = $db->query("SELECT data_value FROM ITEM_DATA WHERE data_key = 'Innodata_Batch_ID' AND xcpid = '$xcpid'");
+		if($data->count()){
+			return $data->first()->data_value;
+		} else {
+			return false;
+		}
+	}
+
 	public static function changeItemData($xcpid, $key, $value, $method, $source, $user, $dataType = null) {
+
 		$db = DB::getInstance();
 		$date = date("Y/m/d H:i:s"). substr((string)microtime(), 1, 3);
 		switch ($method) {
 			case 'update':
-				$sql = "UPDATE $source SET [data_value] = '$value', edited_on = $date, edited_by = $user WHERE xcpid = '$xcpid' and data_key = '$key'";
+				$sql = "UPDATE $source SET [data_value] = '$value', edited_on = '$date', edited_by = $user WHERE xcpid = '$xcpid' and data_key = '$key'";
 				break;
 			case 'insert':
-				$sql = "INSERT INTO [dbo].[ITEM_DATA] ([xcpid],[data_key],[data_value],[data_type],[created_on],[created_by],[edited_on],[edited_by])
-						VALUES ('$xcpid','$key','$value',$dataType,$date,$user,NULL,NULL)";
+				$sql = "INSERT INTO $source ([xcpid],[data_key],[data_value],[data_type],[created_on],[created_by],[edited_on],[edited_by])
+						VALUES ('$xcpid','$key','$value',NULL,'$date','$user',NULL,NULL)";
 				break;
 			case 'delete':
 				$sql = "DELETE FROM $source WHERE xcpid = '$xcpid' and data_key = '$key'";
@@ -776,7 +786,6 @@ class Activity {
 				return array('status' => '350', 'message' => 'Unknown database method: ' . $method);
 				break;
 		}
-
 		$db->query($sql);
 		if($db->error()){
 			return array('status' => '300', 'message' => $db->errorInfo());

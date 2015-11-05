@@ -32,7 +32,7 @@ if(Input::exists()) {
 				if(Input::get('nexturl')){
 					Redirect::to(Input::get('nexturl'));
 				} else {
-					Redirect::to('index.php');
+					?><script>window.location.href = 'index.php';</script><?php
 				}
 			} else {
 				?>
