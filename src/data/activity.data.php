@@ -78,7 +78,7 @@ $results = $data->results();
 			$userPrint = ucfirst($result->name_first) . " " . ucfirst($result->name_last);
 		}
 		$outArray[] = array(
-            		'<a id="row_'.$result->XCPID.'" target="details" title="View info for ' . $result->XCPID . ' (' . $result->material_id . ')" href="item.php?xcpid=' . $result->XCPID . '">' . $result->material_id . '</a>',
+            		'<a id="row_'.$result->XCPID.'" target="details" title="View info for ' . $result->XCPID . ' (' . $result->material_id . ')" href="item.php?xcpid=' . $result->XCPID . '">' . $result->XCPID . "_" . $result->material_id . '</a>',
             		'<span title="'. $result->materialDescription .'">' . concatTitle($result->materialDescription,20) . '</span>',
             		$result->projectType,
             		'<span title="' . wordwrap($result->materialTitle, 200, "\n") . '">' . concatTitle($result->materialTitle, 30) . '</span>',
