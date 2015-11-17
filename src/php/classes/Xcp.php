@@ -135,6 +135,16 @@ class XCP {
 		}
 	}
 
+	public function getDWHData($upi) {
+		if($upi){
+			$sql = "SELECT MATERIAL.MATERIAL_ID materialIdLong ,RIGHT(MATERIAL.MATERIAL_ID,8) materialIdShort ,MATERIAL_Z02.PD_ORIG_ORG originatingOrg ,MATERIAL_CHAR.PROJECT projectNumber ,MATERIAL_TITLES.GENERIC_TITLE materialTitle ,MATERIAL_TITLES.PART_TITLE materialPartTitle ,MATERIAL.PD_DESCRIPTION materialDescription ,PROJECT_CHAR.PROJTYPE projectType ,MATERIAL_CHAR.PROOFPAGES pageCount ,PROJECT_DIM.PROJ_USER_STATUS as projectStatus ,PROJECT_DIM.MAX_ACHIEVED_STAGE as projectStage ,PROJECT_DIM.MAX_ACHIEVED_DATE as projectStageDate ,PROJECT_DIM.MAX_6560_DATE as projectForecastPubl ,PROJECT_MANAGER as projectManager ,PROJECT_CHAR.HREV as predRev ,PROJECT_CHAR.STDBDY AS standardsBody ,MATERIAL_CHAR.SUPERSEDES supersedes ,MATERIAL_CHAR.PD_INPUT_DATE publishedDate FROM acta.material LEFT JOIN acta.material_z02 ON material.MATERIAL_ID = MATERIAL_Z02.MATERIAL_ID JOIN acta.MATERIAL_CHAR ON MATERIAL.MATERIAL_ID = MATERIAL_CHAR.MATERIAL_ID LEFT JOIN ACTA.PROJECT_DIM ON MATERIAL_CHAR.PROJECT = PROJECT_DIM.PROJECT_NUMBER LEFT JOIN acta.PROJECT_CHAR ON PROJECT_DIM.PROJECT_ID = PROJECT_CHAR.PROJECT_ID LEFT JOIN ACTA.MATERIAL_TITLES ON MATERIAL_TITLES.MATERIAL_ID = MATERIAL.MATERIAL_ID WHERE MATERIAL.MATERIAL_ID = '0000000000".$upi."'";
+			$db = DBDWH::getInstance();
+			$data = $db->query($sql);
+			return ($data->first());
+		}
+		return false;
+	}
+
 	private function setXcpData($data) {
 		$outputArray = array();
 		$configArray = array(	"XCP_ID" 				=> array(	"include" 			=> false, 
