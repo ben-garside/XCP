@@ -132,6 +132,15 @@ class Activity {
 		}
 	}
 
+	public function listStages() {
+		$sql = "SELECT ACT_STATUS_2.[act] + ':' + ACT_STATUS_2.[status] stage, ACT_DETAIL.FULL_NAME + ' - ' + ACT_STATUS_2.name description FROM [ACT_STATUS_2] left join [ACT_DETAIL] on [ACT_STATUS_2].act = [ACT_DETAIL].ID order by act, status desc";
+		$data = DB::getInstance()->query($sql)->results();
+		foreach ($data as $key => $value) {
+			$out[$value->stage] = $value->description;
+		}
+		return $out;
+	}
+
 	public function showRoles($actId = null) {
 		if($actId) {
 			$sql = "SELECT role_id, role_name FROM ACT_ROLE_MAPPING join ROLES on ROLES.id = ACT_ROLE_MAPPING.role_id WHERE ACT_ID = '" . $actId . "'";
@@ -254,11 +263,12 @@ class Activity {
 
 
 	public function moveToStage($stage) {
+		print $stage;
 		if($this->xcpid) {
 			$user = new User();
 			$userId = $user->data()->id;
 			try {
-				$this->moveToActivity(Activity::splitStage($stage)[activity], Activity::splitStage($stage)[status], $userId, true, '');
+				$this->moveToActivity(Activity::splitStage($stage)[activity], Activity::splitStage($stage)[status], $userId, flase, '');
 			} catch(Exception $e) {
 				return $e->getMessage();
 			}
@@ -338,16 +348,11 @@ class Activity {
 
 	}
 
-	public function moveToActivity($activity = null, $status = null, $user = null, $strict = true, $comment = null) {
+	public function moveToActivity($activity = null, $status = null, $user = null, $strict = false, $comment = null) {
 			if ($this->getCurrentStatus() == $status && $this->getCurrentActivity() == $activity) {
 				throw new Exception("Already there!");
 			} else {
-				if($strict) {
-					if (!$this->canGoToStage($activity . ":" . $status)) {
-    					throw new Exception("Not allowed to go to this stage (" . $activity . ":" . $status . ")" );
-    					return false;
-					}
-				}
+				
 				$date = date("Y/m/d H:i:s"). substr((string)microtime(), 1, 3);
 				$fields = array( 	'XCPID' 	=> $this->xcpid,
 									'activity'	=> $activity,
@@ -411,7 +416,7 @@ class Activity {
 		return $data->results();
 	}
 
-	public function canGoToStage($stage) {
+	private function canGoToStage($stage) {
 		if($stage){
 			foreach ($this->_actRules as $key => $value) {
 				if($stage == $key){

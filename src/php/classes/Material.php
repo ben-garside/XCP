@@ -1,11 +1,14 @@
 <?php
 class Material {
+
 	private $_db,
 			$_dbDwh,
+			$_dbCls,
 			$_validationRules;
 
 	public $upi,
-		   $materialData;
+		   $materialData,
+		   $previousVersion;
 
 	public function __construct($upi = null) {
 		if($upi) {
@@ -13,6 +16,7 @@ class Material {
 		}
 		$this->_db = DB::getInstance();
 		$this->_dbDwh = DBDWH::getInstance();
+		$this->_dbCls = DBCLS::getInstance();
 		if($this->checkDWHdataIsAddable($upi)){
 			$this->getDWHData();
 		} else {
@@ -33,6 +37,7 @@ class Material {
 	}
 
 	public function refreshDWHData() {
+		// need to delte existing data, then...
 		$this->getDWHData();
 	}
 
@@ -80,7 +85,6 @@ class Material {
 		$valid = true;
 		foreach ($this->materialData as $key => $value) {
 			if($rule = $this->_validationRules[$key]){
-				// check againsdt rules
 				$req = $rule['required'];
 				$val = $rule['validation'];
 				if($req == 1 && !$value){
@@ -115,6 +119,20 @@ class Material {
 			$this->_db->insert('DWH_validation', array('upi' => $this->upi, 'validation_check' => $val, 'validation_dt' => $dt, 'validation_error' => $notes));
 			if($this->_db->error()) {
 				print_r($this->_db->errorInfo());
+			}
+		}
+	}
+
+	public function getPreviousVersion() {
+		foreach (explode(',', $this->materialData['supersedes']) as  $value) {
+			if($value) {
+				//Check if its the one. not mat group '20' and description is not a 'WD\'
+				$sql = "select * from acta.material where MATERIAL_ID = '" . $value . "' and material_grp_id <> 20 and DESCRIPTION not like 'WD%'";
+				$data = $this->_dbDwh->query($sql);
+				if($data->count()){
+					$this->previousVersion = $value;
+					return $this;
+				}	
 			}
 		}
 	}

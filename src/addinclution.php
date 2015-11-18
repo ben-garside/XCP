@@ -16,7 +16,7 @@ require_once 'php/templates/header.php';
 		foreach ($upis as $upi) {
 			if(is_numeric($upi) && strlen($upi) == 8){
 				try {
-					$newId = Xcp::includeUpi($upi,Input::get('feed'),$user->data()->id,Input::get('comment'));
+					$newId = Xcp::includeUpi($upi,Input::get('feed'),$user->data()->id,Input::get('comment'), Input::get('stage'));
 					echo "<tr><td><span class='glyphicon glyphicon-ok' aria-hidden='true'></span> " . $upi . "</td><td>Included: <a href='item.php?xcpid=" . $newId . "'>" . $newId . "</a></td></tr>";
 				} catch (Exception $e) {
 					echo "<tr><td><span class='glyphicon glyphicon-remove' aria-hidden='true'></span> " . $upi . "</td><td>" . $e->getMessage() . "</td></tr>";
@@ -52,6 +52,21 @@ require_once 'php/templates/header.php';
        				<?php
       				foreach (Activity::getFeeds() as $feed) {
         				echo '<option value="' . $feed->feed_id . '">' . $feed->feed_name . '</option>';
+      				}
+      				?>
+    			</select>
+		    </div>
+		</div>
+	</div>
+	<div class="form-group">
+		<div class="row">
+			<label class="col-sm-2" for="select_feed">Stage to start the item *</label>
+			<div class="col-sm-6">
+				<select id="select_stage" name="stage" class="form-control" required>
+      				<option value="">Select stage...</option>
+       				<?php
+      				foreach (Activity::listStages() as $stage => $description) {
+        				echo '<option value="' . $stage . '">' . $stage . ' - ' . $description . '</option>';
       				}
       				?>
     			</select>

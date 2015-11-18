@@ -2,12 +2,13 @@
 class XCP {
 	private $_db,
 			$_xcpData,
-			$error = array(),
+			$_error = array(),
 			$_collationFiles = null,
 			$_collationContainer = null,
 			$_collationDate = null,
 			$_collated = false,
-			$_valid = false;
+			$_valid = false,
+			$_xcpDataRaw;
 
 	/**
 	 * Main constuctor function, ruturn false if not valid and exists
@@ -33,6 +34,7 @@ class XCP {
 			}
 		return true;
 	}
+
 	/**
 	 * Validate the XCPID against a regex
 	 * @param string $xcpid 
@@ -56,7 +58,7 @@ class XCP {
 			$data = $this->_db->get('MAINDATA', array( 'XCP_ID', '=', $xcpid));
 			if($data->count()) {
 				$this->setXcpData($data->first());
-				//$this->_xcpData = $data->first();
+				$this->_xcpDataRaw = $data->first();
 				return true;
 			}
 		}
@@ -111,7 +113,7 @@ class XCP {
 		}
 	}
 
-	public function includeUpi($upi,$feed,$user,$comment = null) {
+	public function includeUpi($upi,$feed,$user,$comment = null, $stage) {
 		$db = DB::getInstance();
 		$date = date("Y/m/d H:i:s"). substr((string)microtime(), 1, 3);
 		
@@ -134,6 +136,8 @@ class XCP {
 			if($comment){
 				Activity::changeItemData($newXcp, 'manuallyAddedBecause', $comment, 'insert', 'ITEM_DATA', 1, NULL);
 			}
+			$activity = new Activity($newXcp);
+			$activity->moveToStage($stage);
 			$material = new Material($upi);
 			$material->setDWHData();
 			$material->validate();
@@ -153,7 +157,7 @@ class XCP {
 																	"format" 			=> "",
 																	"display" 			=> "Material ID",
 																	"order"				=> "100"),
-								"feed_id" 				=> array(	"include" 			=> false,
+								"feed_id" 				=> array(	"include" 			=> true,
 																	"includeIfEmpty" 	=> true,
 																	"format" 			=> "",
 																	"display" 			=> "Feed ID",
@@ -207,11 +211,6 @@ class XCP {
 																	"includeIfEmpty" 	=> true,
 																	"format" 			=> "",
 																	"display" 			=> "Stream ID",
-																	"order"				=> "000"),
-								"pipeline_ids" 			=> array(	"include" 			=> true,
-																	"includeIfEmpty" 	=> true,
-																	"format" 			=> "",
-																	"display" 			=> "Pipeline",
 																	"order"				=> "000"),
 								"validation_check" 		=> array(	"include" 			=> true,
 																	"includeIfEmpty" 	=> true,
@@ -293,6 +292,76 @@ class XCP {
 		}
 		return false;		
 	}
+
+	public function findPipeline() {
+		$feed_id = $this->_xcpDataRaw->feed_id;
+		switch ($feed_id) {
+			case '4':
+				$pipeline = 8;
+				break;
+			case '3':
+				$pipeline = 6;
+				break;
+			case '2':
+				$pipeline = 1;
+				break;
+			case '1':
+				// will be 2, 4, 5, 6 or 7 ...
+				echo 'is feed 1';
+				$upi = $this->_xcpDataRaw->material_id;
+				$material = new Material($upi);
+				$origOrg = $this->_xcpDataRaw->originatingOrg;
+				switch ($origOrg) {
+					case 'AAMI':
+						$pipeline = 5;
+						break;
+					case 'ASTM':
+						$pipeline = 6;
+						break;
+					case 'BSI':
+						// cue headfuck...
+						$projType = $this->_xcpDataRaw->projectType;
+						switch ($projType) {
+							case 'AM':
+							case 'CR':
+								// Get list of superseded materials, and get the one we want (the previous published version)
+								if(!$fileToCheck = $material->getPreviousVersion()->previousVersion){
+									$error = 'No SDO given';
+									$pipeline = 99;
+									break;
+								}
+								// as per #18 all CEN items will be a PL2 as CEN XML content is not production ready
+								if($this->_xcpDataRaw->standardsBody == 'CEN') {
+									$pipeline = 2;
+									break;
+								}
+								
+								break;
+							case 'NW':
+							case 'RV':
+							case 'ND':
+							case 'IM':
+								# code...
+								break;
+							default:
+								# code...
+								break;
+						}
+						break;
+					default:
+						$error = 'No SDO given';
+						$pipeline = 99;
+						break;
+				}
+				#$pipeline = 00;
+				break;
+			default:
+				$pipeline = 90;
+				break;
+		}
+		return $pipeline;
+	}
+
 
 	/**
 	 * Returns if the XCPID is valid or not
