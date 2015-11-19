@@ -11,7 +11,7 @@ class DBCLS {
 
 	private function __construct(){
 		try {
-			$this->_pdo = new PDO("sqlsrv:Server=10.33.204.21\\10.33.204.21,1433;Database=ACTAMART", "nucleus", "welcome");
+			$this->_pdo = new PDO("sqlsrv:Server=BSI10VSS01CMS,1433;Database=colos", "CMS_Cust_Adm", "FHbH_psNYzvZ");
 		} catch(PDOException $e) {
 			die($e->getMessage());
 		}

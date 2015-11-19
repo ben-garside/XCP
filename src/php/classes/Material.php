@@ -137,4 +137,65 @@ class Material {
 		}
 	}
 
+	private function hasFile($upi, $contentType = 'XML') { // XML|PDF
+		if($contentType == 'XML') {
+			$file = Material::toDigit($upi, 8) . ".zip";
+			$queryCode = '1004';
+			$sql = "SELECT left(name,8) materialId FROM [colos].[dbo].[Files] where query_id = '". $queryCode ."' AND name = '" . $file . "'";
+		} else if ($contentType == 'PDF') {
+			$file = Material::toDigit($upi, 8);
+			$queryCode = '1002';
+			$sql = "SELECT left(name,8) materialId FROM [colos].[dbo].[Files] where query_id = '". $queryCode ."' AND ContentType_id = '3003' AND left(name,8) = '" . $file . "'";
+		}
+		$data = $this->_dbCls->query($sql);
+		if($data->count() >= 1){
+			return true;
+		}
+		return false;
+	}
+
+	public function hasXML($upi = null) {
+		if(!$upi) {
+			$upi = $this->upi;
+		}
+		return $this->hasFile($upi, 'XML');
+	}
+
+	public function hasPDF($upi = null) {
+		if(!$upi) {
+			$upi = $this->upi;
+		}
+		return $this->hasFile($upi, 'PDF');
+	}
+
+	public static function to8digit($upi) {
+		return Material::toDigit($upi, 8, '0');
+	}
+
+	public static function to18digit($upi) {
+		return Material::toDigit($upi, 18, '0');
+	}
+
+	private function toDigit($val, $dig, $pad) {
+		if(strlen($val) < $dig) {
+			return str_pad($val, $dig, $pad, STR_PAD_LEFT);
+		} elseif (strlen($val) > $dig) {
+			return substr($val, strlen($val) - $dig, $dig);
+		} else {
+			return $val;
+		}
+	}
+
+	public function getMaterialsFromProject() {
+		$sql = "SELECT MATERIAL_Z02.PD_ORIG_ORG ,RIGHT(MATERIAL_CHAR.MATERIAL_ID,8) MATERIAL_ID ,PD_DESCRIPTION
+				FROM acta.MATERIAL_CHAR
+				LEFT JOIN ACTA.MATERIAL_Z02 ON MATERIAL_CHAR.MATERIAL_ID = MATERIAL_Z02.MATERIAL_ID
+				LEFT JOIN ACTA.MATERIAL ON MATERIAL_CHAR.MATERIAL_ID = MATERIAL.MATERIAL_ID
+				WHERE PD_ORIG_ORG <> 'BSI' AND PD_ORIG_ORG is not NULL AND DELETION_FLAG <> 'X' AND DESCRIPTION not like '%(HEADER)%'
+				AND PROJECT = '".$this->materialData['projectNumber']."'
+				ORDER BY MATERIAL_Z02.PD_ORIG_ORG asc";
+		$data = $this->_dbDwh->query($sql)->results();
+		return $data;
+	}
+
 }

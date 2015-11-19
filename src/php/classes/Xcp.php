@@ -10,6 +10,8 @@ class XCP {
 			$_valid = false,
 			$_xcpDataRaw;
 
+	public $xcpid;
+
 	/**
 	 * Main constuctor function, ruturn false if not valid and exists
 	 * @param string $xcpid 
@@ -19,6 +21,7 @@ class XCP {
 		$this->_db = DB::getInstance();
 		if($xcpid) {
 			$this->xcpidChecker($xcpid);
+			$this->xcpid = $xcpid;
 		}
 	}
 	private function xcpidChecker($xcpid = null) {
@@ -307,7 +310,6 @@ class XCP {
 				break;
 			case '1':
 				// will be 2, 4, 5, 6 or 7 ...
-				echo 'is feed 1';
 				$upi = $this->_xcpDataRaw->material_id;
 				$material = new Material($upi);
 				$origOrg = $this->_xcpDataRaw->originatingOrg;
@@ -335,16 +337,82 @@ class XCP {
 									$pipeline = 2;
 									break;
 								}
-								
+								// need to check for files
+								if($material->hasXML($fileToCheck)) {
+									$this->updateFound($fileToCheck, 1);
+									$pipeline = 7;
+									break;
+								} else {
+									$this->updateFound($fileToCheck, 0);
+									$pipeline = 2;
+									break;
+								}
 								break;
 							case 'NW':
 							case 'RV':
 							case 'ND':
 							case 'IM':
-								# code...
+								// ....
+								$matInProject = $material->getMaterialsFromProject();
+								switch (count($matInProject)) {
+									case '0':
+										if($this->_xcpDataRaw->standardsBody == 'BSI') {
+											$fileToCheck = $upi;
+											if($material->hasXML($fileToCheck)) {
+												$this->updateFound($fileToCheck, 1);
+												$pipeline = 4;
+												break;
+											} else {
+												$this->updateFound($fileToCheck, 0);
+												$pipeline = 2;
+												break;
+											}
+										} else {
+											$error = 'No materials returned... check project?';
+											$pipeline = 91;
+											break;
+										}
+										break;
+									case '1':
+										$fileToCheck = $matInProject[0]->MATERIAL_ID;
+										if($material->hasXML($fileToCheck)) {
+											$this->updateFound($fileToCheck, 1);
+											$pipeline = 4;
+											break;
+										} else {
+											$this->updateFound($fileToCheck, 0);
+											$pipeline = 2;
+											break;
+										}
+										break;
+									case '2':
+										$o = $matInProject[0]->PD_ORIG_ORG . $matInProject[1]->PD_ORIG_ORG;
+										if($o == 'CENISO' || $o == 'CENELECISO' || $o = 'CENIEC' || $o == 'CENELECIEC') {
+											$fileToCheck = $matInProject[0]->MATERIAL_ID;
+											if($material->hasXML($fileToCheck)) {
+												$this->updateFound($fileToCheck, 1);
+												$pipeline = 4;
+												break;
+											} else {
+												$this->updateFound($fileToCheck, 0);
+												$pipeline = 2;
+												break;
+											}
+										} else {
+											$error = 'Incorrect materials returned... check project?';
+											$pipeline = 92;
+											break;
+										}
+										break;
+									default:
+										$error = 'No BSI materials in project';
+										$pipeline = 94;
+										break;
+								}
 								break;
 							default:
-								# code...
+								$error = 'No project type given';
+								$pipeline = 96;
 								break;
 						}
 						break;
@@ -360,6 +428,19 @@ class XCP {
 				break;
 		}
 		return $pipeline;
+	}
+
+	private function updateFound($material, $found) {
+		$checkSql = "SELECT id FROM [dbo].[foundTest] WHERE XCPID = '" . $this->xcpid . "'";
+		$data = $this->_db->query($checkSql);
+		$array = array('XCPID' => $this->xcpid, 'lookFor' => Material::to8digit($material), 'found' => $found);
+		if($data->count() >= 1) {
+			//Update
+			$id = $data->first()->id;
+			$this->_db->update('dbo.foundTest', $id, 'id', $array);
+		} else {
+			$this->_db->insert('dbo.foundTest', $array);
+		}
 	}
 
 

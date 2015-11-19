@@ -44,6 +44,7 @@ class DB {
 
 				$this->_count = $this->_query->rowCount();
 			} else {
+				echo 'asdvasfv';
 				$this->_error = true;
 				$this->_errorInfo = $this->_query->errorInfo();
 			}
