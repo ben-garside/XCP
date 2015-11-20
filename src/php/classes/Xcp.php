@@ -332,6 +332,7 @@ class XCP {
 									$pipeline = 99;
 									break;
 								}
+								echo $fileToCheck;
 								// as per #18 all CEN items will be a PL2 as CEN XML content is not production ready
 								if($this->_xcpDataRaw->standardsBody == 'CEN') {
 									$pipeline = 2;
@@ -421,13 +422,15 @@ class XCP {
 						$pipeline = 99;
 						break;
 				}
-				#$pipeline = 00;
 				break;
 			default:
 				$pipeline = 90;
 				break;
 		}
-		return $pipeline;
+		if($error){
+			return array('pipeline'=>$pipeline,'error'=>$error);
+		} 
+		return array('pipeline'=>$pipeline);
 	}
 
 	private function updateFound($material, $found) {

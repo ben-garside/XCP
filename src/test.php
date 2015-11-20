@@ -6,10 +6,9 @@ $xcpid = Input::get('xcpid');
 
 if($xcpid){
 	$test = new Xcp($xcpid);
-	$pipeline = $test->findPipeline();
+	print_r($test->findPipeline());
 }
 
-echo "|".$pipeline."|";
 
 echo 'END</pre><br>';
 ?>
