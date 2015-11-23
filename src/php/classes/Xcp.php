@@ -10,7 +10,8 @@ class XCP {
 			$_valid = false,
 			$_xcpDataRaw;
 
-	public $xcpid;
+	public $xcpid,
+		   $material;
 
 	/**
 	 * Main constuctor function, ruturn false if not valid and exists
@@ -431,6 +432,11 @@ class XCP {
 			return array('pipeline'=>$pipeline,'error'=>$error);
 		} 
 		return array('pipeline'=>$pipeline);
+	}
+
+	public function setPipeline() {
+		$pipelineArray = $this->findPipeline();
+
 	}
 
 	private function updateFound($material, $found) {
