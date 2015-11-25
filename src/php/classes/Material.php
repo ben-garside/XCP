@@ -58,14 +58,16 @@ class Material {
 
 	public function setDWHData() {
 		$upi = $this->upi;
-			if($this->checkDWHdataIsAddable($upi)) {
-				foreach ($this->materialData as $key => $value) {
-					$test = array('material_id' => $upi, 'dataType' => $key, 'dataValue' => $value);
-					$this->_db->insert('DWH_DATA', $test);
-				}
-			} else {
-				return false;
+		echo $upi . '<br>';
+		if($this->checkDWHdataIsAddable($upi)) {
+			foreach ($this->materialData as $key => $value) {
+				$test = array('material_id' => $upi, 'dataType' => $key, 'dataValue' => $value);
+				$this->_db->insert('DWH_DATA', $test);
+				print_r($test);
 			}
+		} else {
+			return false;
+		}
 	}
 
 	public function getValidationRules() {

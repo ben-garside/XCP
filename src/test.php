@@ -6,7 +6,7 @@ $xcpid = Input::get('xcpid');
 
 if($xcpid){
 	$test = new Xcp($xcpid);
-	print_r($test->findPipeline());
+	print_r($test->validateData());
 }
 
 

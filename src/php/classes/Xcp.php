@@ -23,8 +23,19 @@ class XCP {
 		if($xcpid) {
 			$this->xcpidChecker($xcpid);
 			$this->xcpid = $xcpid;
+			$this->getData($xcpid);
+			$this->material = new Material($this->_xcpDataRaw->material_id);
 		}
 	}
+
+	private function getData($xcpid) {
+		$data = $this->_db->get('MAINDATA', array( 'XCP_ID', '=', $xcpid));
+			if($data->count()) {
+				$this->setXcpData($data->first());
+				$this->_xcpDataRaw = $data->first();
+			}
+	}
+
 	private function xcpidChecker($xcpid = null) {
 		$this->validateXcpId($xcpid);
 			if($this->_valid){
@@ -59,10 +70,8 @@ class XCP {
 	 */
 	private function checkExistance($xcpid) {
 		if($xcpid) {
-			$data = $this->_db->get('MAINDATA', array( 'XCP_ID', '=', $xcpid));
+			$data = $this->_db->get('FEED_DATA', array( 'XCP_ID', '=', $xcpid));
 			if($data->count()) {
-				$this->setXcpData($data->first());
-				$this->_xcpDataRaw = $data->first();
 				return true;
 			}
 		}
@@ -89,7 +98,8 @@ class XCP {
 		return 'XCP' . str_pad(rand(0,9999999),7,0, STR_PAD_LEFT);
 	}
 
-	public function makeXcpid() {
+	public function makeXcpid($data) {
+		$db = DB::getInstance();
 		$test = false;
 		while ($test == false) {
 			$xcpid = Xcp::generateXcpid();
@@ -97,7 +107,10 @@ class XCP {
 				$test = true;
 			}
 		}
-		return $xcpid;
+		$data['XCPID'] = $xcpid;
+		#print_r($data);
+		$db->insert("FEED_DATA",$data);
+		return new XCP($xcpid);
 	}
 
 	/**
@@ -126,21 +139,21 @@ class XCP {
 		if($xcp->first()->XCP_ID) {
 			throw new Exception('Item is already in feed: ' . $xcp->first()->XCP_ID);
 		}
-		$newXcp = Xcp::makeXcpid();
-		$data = array(	"XCP_ID" => $newXcp,
-						"feed_id" => $feed,
+		
+		$data = array(	"feed_id" => $feed,
 						"material_id" => $upi,
 						"date_added" => $date
 					);
-		if(!$db->insert("FEED_DATA",$data)) {
+
+		if(!$newXcp = Xcp::makeXcpid($data)) {
 			throw new Exception("SQL ERROR");
 		} else {
-			Activity::changeItemData($newXcp, 'manuallyAddedBy', $user, 'insert', 'ITEM_DATA', 1, NULL);
-			Activity::changeItemData($newXcp, 'manuallyAddedOn', $date, 'insert', 'ITEM_DATA', 1, NULL);
+			Activity::changeItemData($newXcpid, 'manuallyAddedBy', $user, 'insert', 'ITEM_DATA', 1, NULL);
+			Activity::changeItemData($newXcpid, 'manuallyAddedOn', $date, 'insert', 'ITEM_DATA', 1, NULL);
 			if($comment){
-				Activity::changeItemData($newXcp, 'manuallyAddedBecause', $comment, 'insert', 'ITEM_DATA', 1, NULL);
+				Activity::changeItemData($newXcpid, 'manuallyAddedBecause', $comment, 'insert', 'ITEM_DATA', 1, NULL);
 			}
-			$activity = new Activity($newXcp);
+			$activity = new Activity($newXcpid);
 			$activity->moveToStage($stage);
 			$material = new Material($upi);
 			$material->setDWHData();
@@ -434,9 +447,33 @@ class XCP {
 		return array('pipeline'=>$pipeline);
 	}
 
-	public function setPipeline() {
-		$pipelineArray = $this->findPipeline();
+	private function setPipeline() {
+		if($pipelineArray = $this->findPipeline()) {
+			$pipeline = $pipelineArray['pipeline'];
+			$dt = date("Y/m/d H:i:s"). substr((string)microtime(), 1, 3);
+			if($streamData = $this->getStream()){
+				//Updatea->ID;
+				$this->_db->update('STREAM_ALLOCATION', $streamData->ID, 'ID', array('STREAM_ID' => $pipeline, 'ALLOCATION_DATE' => $dt));
+			} else {
+				//Insert
+				$this->_db->insert('STREAM_ALLOCATION', array('XCP_ID' => $this->xcpid, 'STREAM_ID' => $pipeline, 'ALLOCATION_DATE' => $dt));
+			}
+		} 
+		return false;
+	}
 
+	private function getStream() {
+		$data = $this->_db->query("SELECT * FROM STREAM_ALLOCATION WHERE XCP_ID = '".$this->xcpid."'");
+		if($data->count() >= 1){
+			return $data->first();
+		}
+		return false;
+	}
+
+	public function validateData() {
+		#$this->material->setDWHData();
+		#$this->material->validate();
+		return $this->setPipeline();
 	}
 
 	private function updateFound($material, $found) {
