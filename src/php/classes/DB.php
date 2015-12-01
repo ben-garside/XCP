@@ -7,14 +7,32 @@ class DB {
 			$_errorInfo = null,
 			$_results,
 			$_count = 0,
+			$_connAttempts = 5,
 			$_columns = array();
 
 	private function __construct(){
-		try {
-			$this->_pdo = new PDO('sqlsrv:Server=' . Config::get('mysql/host') . ';Database=' . Config::get('mysql/db'), Config::get('mysql/username'), Config::get('mysql/password'));
-		} catch(PDOException $e) {
-			die($e->getMessage());
+		
+		$retries = $this->_connAttempts;
+		while ($retries > 0)
+		{
+			try
+			{
+				$this->_pdo = new PDO('sqlsrv:Server=' . Config::get('mysql/host') . ';Database=' . Config::get('mysql/db'), Config::get('mysql/username'), Config::get('mysql/password'));
+				$retries = 0;
+			}
+			catch (PDOException $e)
+			{
+				if($e->getCode() == "08001") { // Only retry if the error is 08001 - Connection error.
+					echo "Something went wrong, retrying...\n";
+					$retries--;
+					usleep(500); // Wait 0.5s between retries.
+				} else {
+					die($e->getMessage());
+				}
+				
+			}
 		}
+
 	}
 
 	public static function getInstance() {
